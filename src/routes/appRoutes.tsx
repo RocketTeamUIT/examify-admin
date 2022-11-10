@@ -4,6 +4,10 @@ import { RouteType } from './config';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import DefaultPage from '../pages/dashboard/DefaultPage';
 import DashboardIndex from '../pages/dashboard/DashboardIndex';
+import ChangelogPage from '../pages/changelog/ChangelogPage';
+import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined';
+import AnalyticsPage from '../pages/dashboard/AnalyticsPage';
+import SassPage from '../pages/dashboard/SassPage';
 
 const appRoutes: RouteType[] = [
   {
@@ -33,7 +37,32 @@ const appRoutes: RouteType[] = [
           displayText: 'Default',
         },
       },
+      {
+        path: '/dashboard/analytics',
+        element: <AnalyticsPage />,
+        state: 'dashboard.analytics',
+        sidebarProps: {
+          displayText: 'AnalyticsPage',
+        },
+      },
+      {
+        path: '/dashboard/sass',
+        element: <SassPage />,
+        state: 'dashboard.sass',
+        sidebarProps: {
+          displayText: 'SassPage',
+        },
+      },
     ],
+  },
+  {
+    path: '/changelog',
+    element: <ChangelogPage />,
+    state: 'dashboard.index',
+    sidebarProps: {
+      displayText: 'Changelog',
+      icon: <FormatListBulletedOutlinedIcon />,
+    },
   },
 ];
 
