@@ -21,11 +21,17 @@ const SidebarItem = ({ item }: Props) => {
           backgroundColor: colorConfigs.sidebar.hoverBg,
         },
         backgroundColor: appState === item.state ? colorConfigs.sidebar.activeBg : 'unset',
+        color: appState === item.state ? colorConfigs.sidebar.activeColor : 'unset',
         paddingY: '12px',
         paddingX: '24px',
       }}
     >
-      <ListItemIcon sx={{ color: colorConfigs.sidebar.color }}>
+      <ListItemIcon
+        sx={{
+          color:
+            appState === item.state ? colorConfigs.sidebar.activeColor : colorConfigs.sidebar.color,
+        }}
+      >
         {item.sidebarProps.icon && item.sidebarProps.icon}
       </ListItemIcon>
       {item.sidebarProps.displayText}

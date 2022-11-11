@@ -1,13 +1,19 @@
 import DashboardPageLayout from '../pages/dashboard/DashboardPageLayout';
 import HomePage from '../pages/home/HomePage';
 import { RouteType } from './config';
-import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import DefaultPage from '../pages/dashboard/DefaultPage';
 import DashboardIndex from '../pages/dashboard/DashboardIndex';
-import ChangelogPage from '../pages/changelog/ChangelogPage';
-import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined';
 import AnalyticsPage from '../pages/dashboard/AnalyticsPage';
 import SassPage from '../pages/dashboard/SassPage';
+import { BiHomeAlt, BiLayout, BiDetail } from 'react-icons/bi';
+import CourseIndex from '../pages/course/CourseIndex';
+import CourseListPage from '../pages/course/CourseListPage';
+import CourseCreatePage from '../pages/course/CourseCreatePage';
+import CoursePageLayout from '../pages/course/CoursePageLayout';
+import ExamPageLayout from '../pages/exam/ExamPageLayout';
+import ExamIndex from '../pages/exam/ExamIndex';
+import ExamListPage from '../pages/exam/ExamListPage';
+import ExamCreatePage from '../pages/exam/ExamCreatePage';
 
 const appRoutes: RouteType[] = [
   {
@@ -21,7 +27,7 @@ const appRoutes: RouteType[] = [
     state: 'dashboard',
     sidebarProps: {
       displayText: 'Dashboard',
-      icon: <DashboardOutlinedIcon />,
+      icon: <BiHomeAlt size={24} />,
     },
     child: [
       {
@@ -56,13 +62,68 @@ const appRoutes: RouteType[] = [
     ],
   },
   {
-    path: '/changelog',
-    element: <ChangelogPage />,
-    state: 'changelog',
+    path: '/course',
+    element: <CoursePageLayout />,
+    state: 'course',
     sidebarProps: {
-      displayText: 'Changelog',
-      icon: <FormatListBulletedOutlinedIcon />,
+      displayText: 'Khóa học',
+      icon: <BiLayout size={24} />,
     },
+    child: [
+      {
+        index: true,
+        element: <CourseIndex />,
+        state: 'course.index',
+      },
+      {
+        path: '/course/list',
+        element: <CourseListPage />,
+        state: 'course.list',
+        sidebarProps: {
+          displayText: 'Danh sách',
+        },
+      },
+      {
+        path: '/course/create',
+        element: <CourseCreatePage />,
+        state: 'course.create',
+        sidebarProps: {
+          displayText: 'Tạo',
+        },
+      },
+    ],
+  },
+  {
+    path: '/exam',
+    element: <ExamPageLayout />,
+    state: 'exam',
+    sidebarProps: {
+      displayText: 'Đề thi',
+      icon: <BiDetail size={24} />,
+    },
+    child: [
+      {
+        index: true,
+        element: <ExamIndex />,
+        state: 'exam.index',
+      },
+      {
+        path: '/exam/list',
+        element: <ExamListPage />,
+        state: 'exam.list',
+        sidebarProps: {
+          displayText: 'Danh sách',
+        },
+      },
+      {
+        path: '/exam/create',
+        element: <ExamCreatePage />,
+        state: 'exam.create',
+        sidebarProps: {
+          displayText: 'Tạo',
+        },
+      },
+    ],
   },
 ];
 

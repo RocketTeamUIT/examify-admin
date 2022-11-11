@@ -1,4 +1,4 @@
-import { Drawer, List, Toolbar } from '@mui/material';
+import { Box, Drawer, List, Toolbar } from '@mui/material';
 import { Stack } from '@mui/system';
 import assets from '../../assets';
 import colorConfigs from '../../configs/colorConfigs';
@@ -25,8 +25,8 @@ const Sidebar = () => {
     >
       <List disablePadding>
         <Toolbar sx={{ marginBottom: '20px' }}>
-          <Stack sx={{ width: '100%' }} direction="row" justifyContent="center">
-            <img src={assets.images.logo} alt="s" />
+          <Stack sx={{ width: '100%', marginTop: '20px' }} direction="row" justifyContent="left">
+            <img style={{ width: '120px', height: 'auto' }} src={assets.images.logo} alt="s" />
           </Stack>
         </Toolbar>
         {appRoutes.map((route, index) => {
