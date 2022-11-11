@@ -27,12 +27,12 @@ const appRoutes: RouteType[] = [
       {
         index: true,
         element: <DashboardIndex />,
-        state: 'dashboard.default',
+        state: 'dashboard.index',
       },
       {
         path: '/dashboard/default',
         element: <DefaultPage />,
-        state: 'dashboard.index',
+        state: 'dashboard.default',
         sidebarProps: {
           displayText: 'Default',
         },
@@ -58,7 +58,7 @@ const appRoutes: RouteType[] = [
   {
     path: '/changelog',
     element: <ChangelogPage />,
-    state: 'dashboard.index',
+    state: 'changelog',
     sidebarProps: {
       displayText: 'Changelog',
       icon: <FormatListBulletedOutlinedIcon />,

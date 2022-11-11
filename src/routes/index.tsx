@@ -16,7 +16,9 @@ const generateRoute = (routes: RouteType[]): ReactNode => {
     ) : (
       <Route
         path={route.path}
-        element={<PageWrapper state={route.state ?? undefined}>{route.element}</PageWrapper>}
+        element={
+          <PageWrapper state={route.child ? undefined : route.state}>{route.element}</PageWrapper>
+        }
         key={index}
       >
         {route.child && generateRoute(route.child)}
