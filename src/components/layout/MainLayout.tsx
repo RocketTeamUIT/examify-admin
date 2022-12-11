@@ -1,34 +1,27 @@
-import { Box, Toolbar } from '@mui/material';
+import { Box } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { Outlet } from 'react-router-dom';
 import colorConfigs from '../../configs/colorConfigs';
-import sizeConfigs from '../../configs/sizeConfigs';
+import { toggleBar } from '../../redux/features/appStateSlice';
+import { RootState } from '../../redux/store';
 import Sidebar from '../common/Sidebar';
-import Topbar from '../common/Topbar';
 
 const MainLayout = () => {
+  const { hideBar } = useSelector((store: RootState) => store.appState);
+  const dispatch = useDispatch();
+
   return (
     <Box sx={{ display: 'flex' }}>
-      <Topbar />
+      <Sidebar toggle={() => dispatch(toggleBar())} showBar={!hideBar} />
       <Box
-        component="nav"
-        sx={{
-          width: sizeConfigs.sidebar.width,
-          flexShrink: 0,
-        }}
-      >
-        <Sidebar />
-      </Box>
-      <Box
-        component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
-          width: `calc(100% - ${sizeConfigs.sidebar.width})`,
-          minHeight: '100vh',
+          py: 3,
+          px: 4,
+          height: '100vh',
           backgroundColor: colorConfigs.mainBg,
         }}
       >
-        <Toolbar />
         <Outlet />
       </Box>
     </Box>

@@ -8,12 +8,12 @@ import SassPage from '../pages/dashboard/SassPage';
 import { BiHomeAlt, BiLayout, BiDetail } from 'react-icons/bi';
 import CourseIndex from '../pages/course/CourseIndex';
 import CourseListPage from '../pages/course/CourseListPage';
-import CourseCreatePage from '../pages/course/CourseCreatePage';
 import CoursePageLayout from '../pages/course/CoursePageLayout';
 import ExamPageLayout from '../pages/exam/ExamPageLayout';
 import ExamIndex from '../pages/exam/ExamIndex';
 import ExamListPage from '../pages/exam/ExamListPage';
 import ExamCreatePage from '../pages/exam/ExamCreatePage';
+import CourseCreatePage from '../pages/course/CourseCreatePage';
 
 const appRoutes: RouteType[] = [
   {
@@ -88,7 +88,7 @@ const appRoutes: RouteType[] = [
         element: <CourseCreatePage />,
         state: 'course.create',
         sidebarProps: {
-          displayText: 'Tạo',
+          displayText: 'Tạo khoá học',
         },
       },
     ],
