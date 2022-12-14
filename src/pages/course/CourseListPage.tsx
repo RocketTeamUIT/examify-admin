@@ -19,7 +19,7 @@ const columns: GridColDef[] = [
     sortable: false,
     disableColumnMenu: true,
     renderCell: (params) => (
-      <Link to={`/course/list/${params.row.id}`}>
+      <Link to={`/course/${params.row.id}`}>
         <IconButton>
           <EditIcon />
         </IconButton>

@@ -62,7 +62,7 @@ const appRoutes: RouteType[] = [
     ],
   },
   {
-    path: '/course',
+    path: '/',
     element: <CoursePageLayout />,
     state: 'course',
     sidebarProps: {
@@ -72,15 +72,11 @@ const appRoutes: RouteType[] = [
     child: [
       {
         index: true,
-        element: <CourseIndex />,
-        state: 'course.index',
-      },
-      {
-        path: '/course/list',
+        path: '/course',
         element: <CourseListPage />,
         state: 'course.list',
         sidebarProps: {
-          displayText: 'Danh sách',
+          displayText: 'Danh sách khoá học',
         },
       },
       {

@@ -6,6 +6,7 @@ import theme from './theme';
 import { ThemeProvider } from '@mui/material/styles';
 import AuthLayout from 'components/layout/AuthLayout';
 import CourseDetail from 'pages/course/CourseDetail/CourseDetail';
+import ChapterDetail from 'pages/course/ChapterDetail/ChapterDetail';
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -28,7 +29,8 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout />}>
             {routes}
-            <Route path="/course/list/:id" element={<CourseDetail />} />
+            <Route path="/course/:courseId" element={<CourseDetail />} />
+            <Route path="/course/:courseId/chapter/:chapterId" element={<ChapterDetail />} />
           </Route>
           <Route element={<AuthLayout />}>{authenticationRoutes}</Route>
         </Routes>

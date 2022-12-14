@@ -23,7 +23,7 @@ const sx: SxProps = {
   mt: '24px',
 };
 
-const Form = () => {
+const CourseForm = () => {
   const [courseType, setCourseType] = useState<string>('');
   const ref = useRef<HTMLInputElement>(null);
 
@@ -289,4 +289,4 @@ const Form = () => {
   );
 };
 
-export default Form;
+export default CourseForm;

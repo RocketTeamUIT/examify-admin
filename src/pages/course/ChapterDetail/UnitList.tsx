@@ -19,7 +19,7 @@ const columns: GridColDef[] = [
     disableColumnMenu: true,
     width: 60,
     renderCell: (params) => (
-      <Link to={`chapter/${params.row.id}`}>
+      <Link to={`unit/${params.row.id}`}>
         <IconButton>
           <EditIcon />
         </IconButton>
@@ -42,12 +42,12 @@ const columns: GridColDef[] = [
 const rows = [
   {
     id: 1,
-    name: 'Thức thứ 8 - Bất tri hoả',
+    name: 'Nhập môn Anh văn Siêu cấp 2',
     totalLesson: 43,
   },
   {
     id: 2,
-    name: 'Thức thứ 9 - Luyện ngục',
+    name: 'Nhập môn Anh văn Siêu cấp 2',
     totalLesson: 43,
   },
 ];
@@ -111,7 +111,7 @@ const style: SxProps = {
   p: 4,
 };
 
-const ChapterList = (props: Props) => {
+const UnitList = (props: Props) => {
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
@@ -126,7 +126,7 @@ const ChapterList = (props: Props) => {
     <Box display="flex" height="calc(100vh - 50px)" flexDirection="column">
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
-          <TinyForm handleFormSubmit={() => {}} title="Thêm chương" />
+          <TinyForm handleFormSubmit={() => {}} title="Thêm chủ đề" />
         </Box>
       </Modal>
 
@@ -155,4 +155,4 @@ const ChapterList = (props: Props) => {
   );
 };
 
-export default ChapterList;
+export default UnitList;
