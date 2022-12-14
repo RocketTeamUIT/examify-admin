@@ -1,9 +1,11 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
-import { routes } from './routes';
+import { authenticationRoutes, routes } from './routes';
 import './index.css';
 import theme from './theme';
 import { ThemeProvider } from '@mui/material/styles';
+import AuthLayout from 'components/layout/AuthLayout';
+import CourseDetail from 'pages/course/CourseDetail/CourseDetail';
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -26,7 +28,9 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout />}>
             {routes}
+            <Route path="/course/list/:id" element={<CourseDetail />} />
           </Route>
+          <Route element={<AuthLayout />}>{authenticationRoutes}</Route>
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

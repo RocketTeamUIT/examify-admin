@@ -1,4 +1,4 @@
-import { Drawer, List, Toolbar, IconButton } from '@mui/material';
+import { Drawer, List, Toolbar, IconButton, Box, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import assets from '../../assets';
 import colorConfigs from '../../configs/colorConfigs';
@@ -7,6 +7,15 @@ import appRoutes from '../../routes/appRoutes';
 import SidebarItem from './SidebarItem';
 import SidebarItemCollapse from './SidebarItemCollapse';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import User from './User';
+import { colors } from '../../theme';
+import LogoutIcon from '@mui/icons-material/Logout';
+import PrimaryButton from './PrimaryButton';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from 'redux/store';
+import { logOut, resetState } from 'redux/features/auth/authSlice';
+import useAxiosPrivate from 'hooks/useAxiosPrivate';
+import { useNavigate } from 'react-router-dom';
 
 type SidebarProps = {
   toggle: React.MouseEventHandler<HTMLElement>;
@@ -14,6 +23,16 @@ type SidebarProps = {
 };
 
 const Sidebar = ({ toggle, showBar }: SidebarProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    dispatch(logOut(axiosPrivate));
+    dispatch(resetState());
+    navigate('/login');
+  };
+
   return (
     <Drawer
       open={showBar}
@@ -31,10 +50,18 @@ const Sidebar = ({ toggle, showBar }: SidebarProps) => {
         },
       }}
     >
-      <List disablePadding>
+      <List
+        disablePadding
+        sx={{
+          '&': {
+            height: '100%',
+            position: 'relative',
+          },
+        }}
+      >
         <Toolbar sx={{ margin: '8px 0 20px' }}>
           <Stack
-            sx={{ width: '100%', marginTop: '20px' }}
+            sx={{ width: '100%', paddingTop: '20px' }}
             direction="row"
             justifyContent="space-between"
           >
@@ -72,6 +99,36 @@ const Sidebar = ({ toggle, showBar }: SidebarProps) => {
             )
           ) : null;
         })}
+
+        <Box width="100%" px="20px" bottom="24px" position="absolute">
+          <Typography
+            color={colors.grey.bitDark}
+            fontSize="12px"
+            fontWeight="bold"
+            sx={{
+              mb: '20px',
+            }}
+          >
+            NGUỜI DÙNG
+          </Typography>
+          <User />
+          <PrimaryButton
+            onClick={handleClick}
+            variant="contained"
+            sx={{
+              width: '100%',
+              mt: '24px',
+              position: 'relative',
+              bgcolor: colors.grey.quiteDark,
+              '&:hover': {
+                bgcolor: colors.grey.bitDark,
+              },
+            }}
+          >
+            <LogoutIcon sx={{ position: 'absolute', left: '10px' }} />
+            Đăng xuất
+          </PrimaryButton>
+        </Box>
       </List>
     </Drawer>
   );

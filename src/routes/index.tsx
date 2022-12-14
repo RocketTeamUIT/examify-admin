@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom';
 import PageWrapper from '../components/layout/PageWrapper';
 import appRoutes from './appRoutes';
 import { RouteType } from './config';
+import authRoutes from './authenticationRoutes';
 
 const generateRoute = (routes: RouteType[]): ReactNode => {
   return routes.map((route, index) =>
@@ -26,5 +27,7 @@ const generateRoute = (routes: RouteType[]): ReactNode => {
     )
   );
 };
+
+export const authenticationRoutes: ReactNode = generateRoute(authRoutes);
 
 export const routes: ReactNode = generateRoute(appRoutes);

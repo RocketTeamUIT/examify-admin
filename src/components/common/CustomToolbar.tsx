@@ -1,31 +1,20 @@
-import React from 'react';
 import {
+  GridToolbarColumnsButton,
   GridToolbarContainer,
   GridToolbarExport,
-  GridToolbarFilterButton,
-  GridToolbarQuickFilter,
 } from '@mui/x-data-grid';
+import { SxProps } from '@mui/material';
+
+const sx: SxProps = {
+  p: '10px 12px',
+  m: '4px 2px 6px',
+};
 
 const CustomToolbar = () => {
   return (
     <GridToolbarContainer>
-      <GridToolbarQuickFilter
-        sx={{
-          p: '10px 12px',
-        }}
-      />
-      <GridToolbarFilterButton
-        sx={{
-          p: '10px 12px',
-          m: '4px 2px 6px',
-        }}
-      />
-      <GridToolbarExport
-        sx={{
-          p: '10px 12px',
-          m: '4px 2px 6px',
-        }}
-      />
+      <GridToolbarColumnsButton sx={sx} />
+      <GridToolbarExport sx={sx} />
     </GridToolbarContainer>
   );
 };
