@@ -1,4 +1,4 @@
-import { IconButton, Box, SxProps } from '@mui/material';
+import { IconButton, Box, SxProps, Tooltip } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { colors } from 'theme';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
@@ -7,10 +7,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import PrimaryButton from 'components/common/PrimaryButton';
 import Modal from '@mui/material/Modal';
 import { useState } from 'react';
-import TinyForm from '../TinyForm';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import Tooltip from '@mui/material/Tooltip';
+import LessonForm from './LessonForm';
 
 type Props = {};
 
@@ -24,7 +23,7 @@ const columns: GridColDef[] = [
     renderCell: (params) => (
       <>
         <Tooltip title="Chỉnh sửa">
-          <Link to={`unit/${params.row.id}`}>
+          <Link to={`lesson/${params.row.id}`}>
             <IconButton>
               <EditIcon />
             </IconButton>
@@ -43,10 +42,6 @@ const columns: GridColDef[] = [
       </>
     ),
   },
-  {
-    field: 'order',
-    headerName: 'Thứ tự',
-  },
   { field: 'id', headerName: 'ID' },
   {
     field: 'name',
@@ -55,23 +50,42 @@ const columns: GridColDef[] = [
     minWidth: 300,
   },
   {
-    field: 'totalLesson',
-    headerName: 'Số bài',
+    field: 'type',
+    headerName: 'Loại',
+  },
+  {
+    field: 'createdAt',
+    headerName: 'Ngày tạo',
+    minWidth: 150,
+  },
+  {
+    field: 'updatedAt',
+    headerName: 'Ngày cập nhật',
+    minWidth: 150,
   },
 ];
 
 const rows = [
   {
-    order: 1,
     id: 1,
-    name: 'Nhập môn Anh văn Siêu cấp 2',
-    totalLesson: 43,
+    name: 'First Impact',
+    type: 'Video',
+    createdAt: '224124',
+    updatedAt: '224124',
   },
   {
-    order: 2,
     id: 2,
-    name: 'Nhập môn Anh văn Siêu cấp 2',
-    totalLesson: 43,
+    name: 'Second Impact',
+    type: 'Text',
+    createdAt: '224124',
+    updatedAt: '224124',
+  },
+  {
+    id: 3,
+    name: 'Third Impact',
+    type: 'Flashcard',
+    createdAt: '224124',
+    updatedAt: '224124',
   },
 ];
 
@@ -121,42 +135,14 @@ const sx: SxProps = {
   },
 };
 
-const style: SxProps = {
-  position: 'absolute',
-  zIndex: '10',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 600,
-  bgcolor: 'white',
-  borderRadius: '8px',
-  boxShadow: 24,
-  p: 4,
-};
-
-const UnitList = (props: Props) => {
-  const [open, setOpen] = useState(false);
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
+const LessonList = (props: Props) => {
   return (
     <Box display="flex" height="calc(100vh - 50px)" flexDirection="column">
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={style}>
-          <TinyForm handleFormSubmit={() => {}} title="Thêm chủ đề" />
-        </Box>
-      </Modal>
-
       <Box display="flex" justifyContent="right">
-        <PrimaryButton variant="contained" onClick={handleOpen}>
-          Tạo mới
-        </PrimaryButton>
+        <Link to="lesson/create" key="1">
+          <PrimaryButton variant="contained">Tạo mới</PrimaryButton>
+        </Link>
+        ,
       </Box>
 
       <Box flex="1" mt="12px">
@@ -178,4 +164,4 @@ const UnitList = (props: Props) => {
   );
 };
 
-export default UnitList;
+export default LessonList;

@@ -7,6 +7,7 @@ import { colors } from '../../../theme';
 import * as yup from 'yup';
 import { FormControl, FormHelperText, MenuItem, Select } from '@mui/material';
 import CustomTextField from '../../../components/common/CustomTextField';
+import AlertDialog from '../AlertDialog';
 
 const initialValues = {
   pointsUnlock: '',
@@ -25,6 +26,7 @@ const sx: SxProps = {
 
 const CourseForm = () => {
   const [courseType, setCourseType] = useState<string>('');
+  const [open, setOpen] = useState<boolean>(false);
   const ref = useRef<HTMLInputElement>(null);
 
   const courseSchema = useMemo(
@@ -71,6 +73,13 @@ const CourseForm = () => {
       }),
     []
   );
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const triggerFileInput = () => {
     ref.current && ref.current.click();
@@ -270,9 +279,21 @@ const CourseForm = () => {
               sx={sx}
             />
 
-            <PrimaryButton variant="contained" type="submit" sx={{ mt: '40px', width: '100%' }}>
-              Lưu
-            </PrimaryButton>
+            <Box display="flex" gap="20px" mt="40px">
+              <PrimaryButton
+                variant="outlined"
+                color="error"
+                sx={{
+                  flex: '1',
+                }}
+                onClick={handleOpen}
+              >
+                Xoá khoá học này
+              </PrimaryButton>
+              <PrimaryButton variant="contained" type="submit" sx={{ flex: '1' }}>
+                Lưu
+              </PrimaryButton>
+            </Box>
 
             <input
               accept=".jpg, .png"
@@ -283,6 +304,8 @@ const CourseForm = () => {
               ref={ref}
             />
           </Box>
+
+          <AlertDialog open={open} handleClose={handleClose} />
         </form>
       )}
     </Formik>

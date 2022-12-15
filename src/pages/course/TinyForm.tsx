@@ -3,6 +3,9 @@ import PrimaryButton from 'components/common/PrimaryButton';
 import { Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { Box } from '@mui/system';
+import AlertDialog from './AlertDialog';
+import { useState } from 'react';
 
 const initialValues = {
   name: '',
@@ -18,11 +21,19 @@ interface ITinyForm {
 }
 
 const TinyForm = ({ handleFormSubmit, title }: ITinyForm) => {
+  const [open, setOpen] = useState<boolean>(false);
   const { touched, values, handleBlur, handleChange, handleSubmit, errors } = useFormik({
     initialValues,
     onSubmit: handleFormSubmit,
     validationSchema,
   });
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <form
@@ -48,15 +59,22 @@ const TinyForm = ({ handleFormSubmit, title }: ITinyForm) => {
         }}
       />
 
-      <PrimaryButton
-        variant="contained"
-        sx={{
-          mt: '24px',
-          width: '100%',
-        }}
-      >
-        Lưu
-      </PrimaryButton>
+      <Box display="flex" gap="20px" mt="40px">
+        <PrimaryButton
+          variant="outlined"
+          color="error"
+          sx={{
+            flex: '1',
+          }}
+          onClick={handleOpen}
+        >
+          Xoá
+        </PrimaryButton>
+        <PrimaryButton variant="contained" type="submit" sx={{ flex: '1' }}>
+          Lưu
+        </PrimaryButton>
+      </Box>
+      <AlertDialog open={open} handleClose={handleClose} />
     </form>
   );
 };

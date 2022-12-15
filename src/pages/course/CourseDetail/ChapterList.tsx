@@ -1,4 +1,4 @@
-import { IconButton, Box, SxProps } from '@mui/material';
+import { IconButton, Box, SxProps, Tooltip } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { colors } from 'theme';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
@@ -8,6 +8,8 @@ import PrimaryButton from 'components/common/PrimaryButton';
 import Modal from '@mui/material/Modal';
 import { useState } from 'react';
 import TinyForm from '../TinyForm';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 type Props = {};
 
@@ -17,15 +19,30 @@ const columns: GridColDef[] = [
     headerName: '',
     sortable: false,
     disableColumnMenu: true,
-    width: 60,
+    width: 140,
     renderCell: (params) => (
-      <Link to={`chapter/${params.row.id}`}>
-        <IconButton>
-          <EditIcon />
-        </IconButton>
-      </Link>
+      <>
+        <Tooltip title="Chỉnh sửa">
+          <Link to={`chapter/${params.row.id}`}>
+            <IconButton>
+              <EditIcon />
+            </IconButton>
+          </Link>
+        </Tooltip>
+        <Tooltip title="Tăng thứ tự">
+          <IconButton>
+            <ArrowUpwardIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Giảm thứ tự">
+          <IconButton>
+            <ArrowDownwardIcon />
+          </IconButton>
+        </Tooltip>
+      </>
     ),
   },
+  { field: 'order', headerName: 'Thứ tự' },
   { field: 'id', headerName: 'ID' },
   {
     field: 'name',
@@ -41,11 +58,13 @@ const columns: GridColDef[] = [
 
 const rows = [
   {
+    order: 1,
     id: 1,
     name: 'Thức thứ 8 - Bất tri hoả',
     totalLesson: 43,
   },
   {
+    order: 2,
     id: 2,
     name: 'Thức thứ 9 - Luyện ngục',
     totalLesson: 43,
@@ -132,7 +151,7 @@ const ChapterList = (props: Props) => {
 
       <Box display="flex" justifyContent="right">
         <PrimaryButton variant="contained" onClick={handleOpen}>
-          Thêm
+          Tạo mới
         </PrimaryButton>
       </Box>
 

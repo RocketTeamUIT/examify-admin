@@ -3,3 +3,7 @@
 * {
   font-family: Inter, 'Helvetica', sans-serif !important;
 }
+
+.ck-editor__editable {
+  min-height: 500px;
+}
