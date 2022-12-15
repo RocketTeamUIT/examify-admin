@@ -1,4 +1,4 @@
-import { IconButton, Box, SxProps } from '@mui/material';
+import { IconButton, Box, SxProps, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import Topbar from '../../components/common/Topbar';
 import { colors } from '../../theme';
@@ -8,6 +8,7 @@ import PrimaryButton from '../../components/common/PrimaryButton';
 import { convertTimeHours, convertTimeMinutes, numberWithCommas } from 'utils/formatCurrency';
 import EditIcon from '@mui/icons-material/Edit';
 import { useCallback } from 'react';
+import useFetchCourses from './hooks/useFetchCourses';
 
 type Props = {};
 
@@ -32,6 +33,7 @@ const columns: GridColDef[] = [
     headerName: 'Tên',
     flex: 1,
     minWidth: 300,
+    renderCell: (params) => <Typography fontWeight="bold">{params.row.name}</Typography>,
   },
   {
     field: 'image',
@@ -57,6 +59,28 @@ const columns: GridColDef[] = [
     field: 'level',
     headerName: 'Mức độ',
     minWidth: 100,
+    renderCell: (params) => {
+      switch (params.row.level) {
+        case 'basic':
+          return (
+            <Typography fontSize="14px" color={colors.primary[500]}>
+              Cơ bản
+            </Typography>
+          );
+        case 'advance':
+          return (
+            <Typography fontSize="14px" color={colors.red[500]}>
+              Nâng cao
+            </Typography>
+          );
+        default:
+          return (
+            <Typography fontSize="14px" color={colors.orange[500]}>
+              Trung bình
+            </Typography>
+          );
+      }
+    },
   },
   {
     field: 'pointToUnlock',
@@ -77,6 +101,13 @@ const columns: GridColDef[] = [
     renderCell: (params) => params.value + '%',
   },
   {
+    field: 'discountPrice',
+    headerName: 'Giá sau giảm',
+    minWidth: 120,
+    renderCell: (params) =>
+      numberWithCommas(Math.round(params.row.price * (1 - params.row.discount / 100))) + 'đ',
+  },
+  {
     field: 'pointReward',
     headerName: 'Điểm thưởng',
   },
@@ -87,6 +118,11 @@ const columns: GridColDef[] = [
   {
     field: 'avgRating',
     headerName: 'Đánh giá',
+    renderCell: (params) => (
+      <Typography fontSize="14px" color={colors.orange[500]}>
+        {params.value}
+      </Typography>
+    ),
   },
   {
     field: 'totalChapter',
@@ -106,40 +142,40 @@ const columns: GridColDef[] = [
   },
 ];
 
-const rows = [
-  {
-    id: 1,
-    name: 'Nhập môn Anh văn Siêu cấp 1',
-    image:
-      'https://occ-0-300-784.1.nflxso.net/dnm/api/v6/6AYY37jfdO6hpXcMjf9Yu5cnmO0/AAAABSLYygH8PLglJ5MsvLCFpM6iTUBMGsqD-f7ki5KNHh3CX3xDobO_XqrdGjlnK0Kb1bLxHRFKYGYd0yKGJUlW4M88L-F2FbS2c4Ka.jpg?r=2ab',
-    level: 'Cơ bản',
-    pointToUnlock: 1234,
-    price: 1234656,
-    discount: 24,
-    pointReward: 1234,
-    participants: 4000,
-    avgRating: 4.3,
-    totalChapter: 12,
-    totalLesson: 100,
-    totalVideoTime: 15364,
-  },
-  {
-    id: 2,
-    name: 'Nhập môn Anh văn Siêu cấp 2',
-    image:
-      'https://occ-0-300-784.1.nflxso.net/dnm/api/v6/6AYY37jfdO6hpXcMjf9Yu5cnmO0/AAAABSLYygH8PLglJ5MsvLCFpM6iTUBMGsqD-f7ki5KNHh3CX3xDobO_XqrdGjlnK0Kb1bLxHRFKYGYd0yKGJUlW4M88L-F2FbS2c4Ka.jpg?r=2ab',
-    level: 'Trung bình',
-    pointToUnlock: 1234,
-    price: 1234656,
-    discount: 24,
-    pointReward: 1234,
-    participants: 4000,
-    avgRating: 4.3,
-    totalChapter: 12,
-    totalLesson: 100,
-    totalVideoTime: 15364,
-  },
-];
+// const rows = [
+//   {
+//     id: 1,
+//     name: 'Nhập môn Anh văn Siêu cấp 1',
+//     image:
+//       'https://occ-0-300-784.1.nflxso.net/dnm/api/v6/6AYY37jfdO6hpXcMjf9Yu5cnmO0/AAAABSLYygH8PLglJ5MsvLCFpM6iTUBMGsqD-f7ki5KNHh3CX3xDobO_XqrdGjlnK0Kb1bLxHRFKYGYd0yKGJUlW4M88L-F2FbS2c4Ka.jpg?r=2ab',
+//     level: 'Cơ bản',
+//     pointToUnlock: 1234,
+//     price: 1234656,
+//     discount: 24,
+//     pointReward: 1234,
+//     participants: 4000,
+//     avgRating: 4.3,
+//     totalChapter: 12,
+//     totalLesson: 100,
+//     totalVideoTime: 15364,
+//   },
+//   {
+//     id: 2,
+//     name: 'Nhập môn Anh văn Siêu cấp 2',
+//     image:
+//       'https://occ-0-300-784.1.nflxso.net/dnm/api/v6/6AYY37jfdO6hpXcMjf9Yu5cnmO0/AAAABSLYygH8PLglJ5MsvLCFpM6iTUBMGsqD-f7ki5KNHh3CX3xDobO_XqrdGjlnK0Kb1bLxHRFKYGYd0yKGJUlW4M88L-F2FbS2c4Ka.jpg?r=2ab',
+//     level: 'Trung bình',
+//     pointToUnlock: 1234,
+//     price: 1234656,
+//     discount: 24,
+//     pointReward: 1234,
+//     participants: 4000,
+//     avgRating: 4.3,
+//     totalChapter: 12,
+//     totalLesson: 100,
+//     totalVideoTime: 15364,
+//   },
+// ];
 
 const sx: SxProps = {
   '& .MuiDataGrid-columnHeader:focus': {
@@ -188,6 +224,7 @@ const sx: SxProps = {
 };
 
 const CourseListPage = (props: Props) => {
+  const { courses: rows } = useFetchCourses();
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 5,
@@ -212,6 +249,9 @@ const CourseListPage = (props: Props) => {
           rowHeight={80}
           getRowSpacing={getRowSpacing}
           initialState={{
+            sorting: {
+              sortModel: [{ field: 'id', sort: 'asc' }],
+            },
             pagination: {
               pageSize: 10,
             },

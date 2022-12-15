@@ -9,6 +9,7 @@ import CourseDetail from 'pages/course/CourseDetail/CourseDetail';
 import ChapterDetail from 'pages/course/ChapterDetail/ChapterDetail';
 import UnitDetail from 'pages/course/UnitDetail';
 import LessonDetail from 'pages/course/LessonDetail/LessonDetail';
+import DetailLayout from 'components/layout/DetailLayout';
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -31,20 +32,22 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout />}>
             {routes}
-            <Route path="/course/:courseId" element={<CourseDetail />} />
-            <Route path="/course/:courseId/chapter/:chapterId" element={<ChapterDetail />} />
-            <Route
-              path="/course/:courseId/chapter/:chapterId/unit/:unitId"
-              element={<UnitDetail />}
-            />
-            <Route
-              path="/course/:courseId/chapter/:chapterId/unit/:unitId/lesson/:lessonId"
-              element={<LessonDetail />}
-            />
-            <Route
-              path="/course/:courseId/chapter/:chapterId/unit/:unitId/lesson/create"
-              element={<LessonDetail type="create" />}
-            />
+            <Route element={<DetailLayout />}>
+              <Route path="/course/:courseId" element={<CourseDetail />} />
+              <Route path="/course/:courseId/chapter/:chapterId" element={<ChapterDetail />} />
+              <Route
+                path="/course/:courseId/chapter/:chapterId/unit/:unitId"
+                element={<UnitDetail />}
+              />
+              <Route
+                path="/course/:courseId/chapter/:chapterId/unit/:unitId/lesson/:lessonId"
+                element={<LessonDetail />}
+              />
+              <Route
+                path="/course/:courseId/chapter/:chapterId/unit/:unitId/lesson/create"
+                element={<LessonDetail type="create" />}
+              />
+            </Route>
           </Route>
           <Route element={<AuthLayout />}>{authenticationRoutes}</Route>
         </Routes>

@@ -1,8 +1,28 @@
 import { Box } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { RootState } from 'redux/store';
+import { colors } from 'theme';
 import Topbar from '../../../components/common/Topbar';
 import LessonForm from './LessonForm';
 
 const LessonDetail = ({ type }: { type?: string }) => {
+  const { courseId, chapterId, unitId, lessonId } = useParams();
+  const { course } = useSelector((store: RootState) => store.course);
+
+  if (!course) return null;
+  const chapter = (course.chapterList || []).find(
+    (chapter: any) => String(chapter.id) === String(chapterId)
+  );
+  if (!chapter) return null;
+  const unit = (chapter.unitList || []).find((unit: any) => String(unit.id) === String(unitId));
+  if (!unit) return null;
+
+  const lesson = (unit.lessonList || []).find(
+    (lesson: any) => String(lesson.id) === String(lessonId)
+  );
+  if (type !== 'create' && !lesson) return null;
+
   return (
     <Box pb="20px">
       <Topbar
@@ -13,25 +33,26 @@ const LessonDetail = ({ type }: { type?: string }) => {
             path: '/course',
           },
           {
-            name: 'Anh văn siêu cấp 1',
-            path: '/course/1',
+            name: course.name,
+            path: '/course/' + courseId,
           },
           {
-            name: 'Thức thứ chín - Luyện ngục',
-            path: '/course/1/chapter/2',
+            name: chapter.name,
+            path: `/course/${courseId}/chapter/${chapterId}`,
           },
           {
-            name: 'Human Instrumentality',
-            path: '/course/1/chapter/2/unit/3',
+            name: unit.name,
+            path: `/course/${courseId}/chapter/${chapterId}/unit/${unitId}`,
           },
           {
-            name: 'Tạo bài học',
+            name: type === 'create' ? 'Tạo bài học' : lesson.name,
           },
         ]}
+        ribbonColor={colors.greenAccent[500]}
       />
 
       <Box mt="24px">
-        <LessonForm />
+        <LessonForm lesson={lesson} />
       </Box>
     </Box>
   );

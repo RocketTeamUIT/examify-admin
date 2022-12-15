@@ -5,11 +5,9 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import CustomToolbar from 'components/common/CustomToolbar';
 import EditIcon from '@mui/icons-material/Edit';
 import PrimaryButton from 'components/common/PrimaryButton';
-import Modal from '@mui/material/Modal';
-import { useState } from 'react';
+
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import LessonForm from './LessonForm';
 
 type Props = {};
 
@@ -42,6 +40,7 @@ const columns: GridColDef[] = [
       </>
     ),
   },
+  { field: 'numericOrder', headerName: 'Thứ tự' },
   { field: 'id', headerName: 'ID' },
   {
     field: 'name',
@@ -56,36 +55,14 @@ const columns: GridColDef[] = [
   {
     field: 'createdAt',
     headerName: 'Ngày tạo',
-    minWidth: 150,
+    minWidth: 200,
+    renderCell: (params) => params.value.slice(0, 19).split('T').join(' '),
   },
   {
     field: 'updatedAt',
     headerName: 'Ngày cập nhật',
-    minWidth: 150,
-  },
-];
-
-const rows = [
-  {
-    id: 1,
-    name: 'First Impact',
-    type: 'Video',
-    createdAt: '224124',
-    updatedAt: '224124',
-  },
-  {
-    id: 2,
-    name: 'Second Impact',
-    type: 'Text',
-    createdAt: '224124',
-    updatedAt: '224124',
-  },
-  {
-    id: 3,
-    name: 'Third Impact',
-    type: 'Flashcard',
-    createdAt: '224124',
-    updatedAt: '224124',
+    minWidth: 200,
+    renderCell: (params) => params.value.slice(0, 19).split('T').join(' '),
   },
 ];
 
@@ -135,7 +112,9 @@ const sx: SxProps = {
   },
 };
 
-const LessonList = (props: Props) => {
+const LessonList = ({ lessonList: rows }: any) => {
+  if (!rows || !Array.isArray(rows)) return null;
+
   return (
     <Box display="flex" height="calc(100vh - 50px)" flexDirection="column">
       <Box display="flex" justifyContent="right">
@@ -149,6 +128,9 @@ const LessonList = (props: Props) => {
         <DataGrid
           rowsPerPageOptions={[5, 10, 20, 50]}
           initialState={{
+            sorting: {
+              sortModel: [{ field: 'numericOrder', sort: 'asc' }],
+            },
             pagination: {
               pageSize: 10,
             },

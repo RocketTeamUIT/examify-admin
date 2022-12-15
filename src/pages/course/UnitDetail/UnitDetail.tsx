@@ -3,13 +3,28 @@ import Topbar from '../../../components/common/Topbar';
 import { useState } from 'react';
 import TinyForm from '../TinyForm';
 import LessonList from './LessonList';
+import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/store';
+import { colors } from 'theme';
 
 const UnitDetail = () => {
   const [currentTab, setCurrentTab] = useState<number>(1);
+  const { courseId, chapterId, unitId } = useParams();
+  const { course } = useSelector((store: RootState) => store.course);
 
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setCurrentTab(newValue);
   };
+
+  if (!course) return null;
+  const chapter = (course.chapterList || []).find(
+    (chapter: any) => String(chapter.id) === String(chapterId)
+  );
+  if (!chapter) return null;
+
+  const unit = (chapter.unitList || []).find((unit: any) => String(unit.id) === String(unitId));
+  if (!unit) return null;
 
   return (
     <Box pb="20px">
@@ -21,17 +36,18 @@ const UnitDetail = () => {
             path: '/course',
           },
           {
-            name: 'Anh văn siêu cấp 1',
-            path: '/course/1',
+            name: course.name,
+            path: '/course/' + courseId,
           },
           {
-            name: 'Thức thứ chín - Luyện ngục',
-            path: '/course/1/chapter/2',
+            name: chapter.name,
+            path: `/course/${courseId}/chapter/${chapterId}`,
           },
           {
-            name: 'Human Instrumentality',
+            name: unit.name,
           },
         ]}
+        ribbonColor={colors.red[500]}
       />
 
       <Tabs
@@ -54,10 +70,10 @@ const UnitDetail = () => {
             transform: 'translateX(-50%)',
           }}
         >
-          <TinyForm handleFormSubmit={() => {}} />
+          <TinyForm data={unit} handleFormSubmit={() => {}} />
         </Box>
       ) : (
-        <LessonList />
+        <LessonList lessonList={unit.lessonList} />
       )}
     </Box>
   );

@@ -3,13 +3,19 @@ import Topbar from '../../../components/common/Topbar';
 import { useState } from 'react';
 import CourseForm from './CourseForm';
 import ChapterList from './ChapterList';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/store';
+import { colors } from 'theme';
 
 const CourseDetail = () => {
   const [currentTab, setCurrentTab] = useState<number>(1);
+  const { course } = useSelector((store: RootState) => store.course);
 
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setCurrentTab(newValue);
   };
+
+  if (!course) return null;
 
   return (
     <Box pb="20px">
@@ -21,9 +27,10 @@ const CourseDetail = () => {
             path: '/course',
           },
           {
-            name: 'Anh văn siêu cấp 1',
+            name: course.name,
           },
         ]}
+        ribbonColor={colors.primary[400]}
       />
 
       <Tabs
@@ -37,7 +44,11 @@ const CourseDetail = () => {
         <Tab value={2} label="Danh sách các chương" />
       </Tabs>
 
-      {currentTab === 1 ? <CourseForm /> : <ChapterList />}
+      {currentTab === 1 ? (
+        <CourseForm course={course} />
+      ) : (
+        <ChapterList chapterList={course.chapterList} />
+      )}
     </Box>
   );
 };

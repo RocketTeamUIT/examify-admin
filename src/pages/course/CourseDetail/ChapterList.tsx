@@ -11,8 +11,6 @@ import TinyForm from '../TinyForm';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-type Props = {};
-
 const columns: GridColDef[] = [
   {
     field: 'action',
@@ -42,7 +40,7 @@ const columns: GridColDef[] = [
       </>
     ),
   },
-  { field: 'order', headerName: 'Thứ tự' },
+  { field: 'numericOrder', headerName: 'Thứ tự' },
   { field: 'id', headerName: 'ID' },
   {
     field: 'name',
@@ -53,21 +51,6 @@ const columns: GridColDef[] = [
   {
     field: 'totalLesson',
     headerName: 'Số bài',
-  },
-];
-
-const rows = [
-  {
-    order: 1,
-    id: 1,
-    name: 'Thức thứ 8 - Bất tri hoả',
-    totalLesson: 43,
-  },
-  {
-    order: 2,
-    id: 2,
-    name: 'Thức thứ 9 - Luyện ngục',
-    totalLesson: 43,
   },
 ];
 
@@ -130,7 +113,7 @@ const style: SxProps = {
   p: 4,
 };
 
-const ChapterList = (props: Props) => {
+const ChapterList = ({ chapterList: rows }: any) => {
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
@@ -140,6 +123,8 @@ const ChapterList = (props: Props) => {
   const handleOpen = () => {
     setOpen(true);
   };
+
+  if (!rows) return null;
 
   return (
     <Box display="flex" height="calc(100vh - 50px)" flexDirection="column">
@@ -159,6 +144,9 @@ const ChapterList = (props: Props) => {
         <DataGrid
           rowsPerPageOptions={[5, 10, 20, 50]}
           initialState={{
+            sorting: {
+              sortModel: [{ field: 'numericOrder', sort: 'asc' }],
+            },
             pagination: {
               pageSize: 10,
             },

@@ -9,21 +9,12 @@ import {
 import CustomTextField from 'components/common/CustomTextField';
 import PrimaryButton from 'components/common/PrimaryButton';
 import { useFormik } from 'formik';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import AlertDialog from '../AlertDialog';
 import FlashcardForm from './FlashcardForm';
 import TextForm from './TextForm';
 import VideoForm from './VideoForm';
-
-const initialValues = {
-  name: '',
-  description: '',
-  type: '',
-  videoUrl: '',
-  text: '',
-  flashcardSetId: '',
-};
 
 const validationSchema = yup.object().shape({
   name: yup.string().required('Mục này không được để trống'),
@@ -43,12 +34,45 @@ const validationSchema = yup.object().shape({
   }),
 });
 
-const LessonForm = () => {
+const LessonForm = ({ lesson }: any) => {
   const handleFormSubmit = (data: any) => {
     console.log(data);
   };
   const [open, setOpen] = useState<boolean>(false);
   const [type, setType] = useState<number>(0);
+
+  const initialValues = lesson
+    ? {
+        name: String(lesson.name),
+        description: String(lesson.description),
+        type: String(lesson.type),
+        videoUrl: String(lesson.videoUrl),
+        text: String(lesson.text),
+        flashcardSetId: String(lesson.flashcardSetId),
+      }
+    : {
+        name: '',
+        description: '',
+        type: '',
+        videoUrl: '',
+        text: '',
+        flashcardSetId: '',
+      };
+
+  useEffect(() => {
+    if (lesson && lesson.type) setType(Number(lesson.type));
+  }, [lesson]);
+
+  const isValuesNotChanged = () => {
+    return (
+      initialValues.name === values.name &&
+      initialValues.description === values.description &&
+      initialValues.type === values.type &&
+      initialValues.videoUrl === values.videoUrl &&
+      initialValues.text === values.text &&
+      initialValues.flashcardSetId === values.flashcardSetId
+    );
+  };
 
   const handleTypeChange = (e: SelectChangeEvent<string>) => {
     setType(Number(e.target.value));
@@ -146,14 +170,7 @@ const LessonForm = () => {
         />
       )}
       {type === 2 && (
-        <TextForm
-          touched={touched}
-          values={values}
-          handleBlur={handleBlur}
-          handleChange={handleChange}
-          errors={errors}
-          setFieldValue={setFieldValue}
-        />
+        <TextForm touched={touched} values={values} errors={errors} setFieldValue={setFieldValue} />
       )}
       {type === 3 && (
         <FlashcardForm
@@ -169,7 +186,7 @@ const LessonForm = () => {
         <PrimaryButton variant="outlined" color="error" onClick={handleOpen}>
           Xoá bài này
         </PrimaryButton>
-        <PrimaryButton variant="contained" type="submit">
+        <PrimaryButton disabled={isValuesNotChanged()} variant="contained" type="submit">
           Lưu
         </PrimaryButton>
       </Box>

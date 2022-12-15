@@ -17,9 +17,10 @@ type TopbarProps = {
   title: string;
   buttons?: ReactElement[];
   breadcrumbs?: BreadcrumbProps[];
+  ribbonColor?: string;
 };
 
-const Topbar: FC<TopbarProps> = ({ title, buttons, breadcrumbs }) => {
+const Topbar: FC<TopbarProps> = ({ title, buttons, breadcrumbs, ribbonColor }) => {
   const { hideBar } = useSelector((store: RootState) => store.appState);
   const dispatch = useDispatch();
   const showBar = () => {
@@ -51,9 +52,12 @@ const Topbar: FC<TopbarProps> = ({ title, buttons, breadcrumbs }) => {
               />
             </IconButton>
           )}
-          <Typography variant="h5" fontWeight="bold">
-            {title}
-          </Typography>
+          <Box display="flex" gap="20px" width="100%">
+            <Typography variant="h5" fontWeight="bold">
+              {title}
+            </Typography>
+            {ribbonColor && <Box display="flex" flex="1" bgcolor={ribbonColor} />}
+          </Box>
 
           <Box ml="auto">{buttons}</Box>
         </Box>

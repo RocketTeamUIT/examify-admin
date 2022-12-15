@@ -2,7 +2,7 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { Box, FormHelperText } from '@mui/material';
 
-const TextForm = ({ touched, values, handleBlur, handleChange, errors, setFieldValue }) => {
+const TextForm = ({ touched, values, errors, setFieldValue }) => {
   return (
     <Box
       mt="24px"

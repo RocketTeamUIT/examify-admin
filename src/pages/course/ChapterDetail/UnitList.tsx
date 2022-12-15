@@ -44,7 +44,7 @@ const columns: GridColDef[] = [
     ),
   },
   {
-    field: 'order',
+    field: 'numericOrder',
     headerName: 'Thứ tự',
   },
   { field: 'id', headerName: 'ID' },
@@ -57,21 +57,6 @@ const columns: GridColDef[] = [
   {
     field: 'totalLesson',
     headerName: 'Số bài',
-  },
-];
-
-const rows = [
-  {
-    order: 1,
-    id: 1,
-    name: 'Nhập môn Anh văn Siêu cấp 2',
-    totalLesson: 43,
-  },
-  {
-    order: 2,
-    id: 2,
-    name: 'Nhập môn Anh văn Siêu cấp 2',
-    totalLesson: 43,
   },
 ];
 
@@ -134,7 +119,7 @@ const style: SxProps = {
   p: 4,
 };
 
-const UnitList = (props: Props) => {
+const UnitList = ({ unitList: rows }: any) => {
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
@@ -144,6 +129,8 @@ const UnitList = (props: Props) => {
   const handleOpen = () => {
     setOpen(true);
   };
+
+  if (!rows || !Array.isArray(rows)) return null;
 
   return (
     <Box display="flex" height="calc(100vh - 50px)" flexDirection="column">
@@ -163,6 +150,9 @@ const UnitList = (props: Props) => {
         <DataGrid
           rowsPerPageOptions={[5, 10, 20, 50]}
           initialState={{
+            sorting: {
+              sortModel: [{ field: 'numericOrder', sort: 'asc' }],
+            },
             pagination: {
               pageSize: 10,
             },
