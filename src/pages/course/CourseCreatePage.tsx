@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import { SelectChangeEvent, SxProps } from '@mui/material';
 import { useFormik } from 'formik';
-import { useRef, useState, useMemo } from 'react';
+import { useRef, useState, useMemo, ChangeEvent } from 'react';
 import PrimaryButton from '../../components/common/PrimaryButton';
 import Topbar from '../../components/common/Topbar';
 import { colors } from '../../theme';
@@ -75,7 +75,7 @@ const CourseCreatePage = (props: Props) => {
         courseTitle: yup.string().required('Mục này không được để trống'),
         description: yup.string().required('Mục này không được để trống'),
         achieves: yup.string().required('Mục này không được để trống'),
-        image: yup.string().required('Mục này không được để trống'),
+        image: yup.string().required('Bạn phải tải lên 1 ảnh'),
       }),
     []
   );
@@ -100,6 +100,17 @@ const CourseCreatePage = (props: Props) => {
       validationSchema: courseSchema,
     });
 
+  const handleUploadImage = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target);
+
+    if (e.target.files) {
+      const image = e.target.files[0];
+      const tempImageUrl = URL.createObjectURL(image);
+      console.log(tempImageUrl);
+      setFieldValue('image', tempImageUrl);
+    }
+  };
+
   return (
     <Box pb="20px">
       <Topbar title="Tạo khoá học" />
@@ -117,7 +128,7 @@ const CourseCreatePage = (props: Props) => {
           {/* Image */}
           <Box
             border="solid 1px"
-            borderColor={colors.grey.light}
+            borderColor={!!touched.image && !!errors.image ? colors.red[500] : colors.grey.light}
             width="100%"
             borderRadius="10px"
             overflow="hidden"
@@ -137,6 +148,14 @@ const CourseCreatePage = (props: Props) => {
               />
             )}
           </Box>
+          <FormHelperText
+            sx={{
+              color: colors.red[500],
+              ml: '16px',
+            }}
+          >
+            {!!touched.image && errors.image}
+          </FormHelperText>
           <PrimaryButton
             onClick={triggerFileInput}
             variant="outlined"
@@ -283,6 +302,7 @@ const CourseCreatePage = (props: Props) => {
           <input
             accept=".jpg, .png"
             type="file"
+            onChange={handleUploadImage}
             style={{
               display: 'none',
             }}

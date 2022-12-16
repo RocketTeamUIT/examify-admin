@@ -12,54 +12,6 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Tooltip from '@mui/material/Tooltip';
 
-type Props = {};
-
-const columns: GridColDef[] = [
-  {
-    field: 'action',
-    headerName: '',
-    sortable: false,
-    disableColumnMenu: true,
-    width: 140,
-    renderCell: (params) => (
-      <>
-        <Tooltip title="Chỉnh sửa">
-          <Link to={`unit/${params.row.id}`}>
-            <IconButton>
-              <EditIcon />
-            </IconButton>
-          </Link>
-        </Tooltip>
-        <Tooltip title="Tăng thứ tự">
-          <IconButton>
-            <ArrowUpwardIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Giảm thứ tự">
-          <IconButton>
-            <ArrowDownwardIcon />
-          </IconButton>
-        </Tooltip>
-      </>
-    ),
-  },
-  {
-    field: 'numericOrder',
-    headerName: 'Thứ tự',
-  },
-  { field: 'id', headerName: 'ID' },
-  {
-    field: 'name',
-    headerName: 'Tên',
-    flex: 1,
-    minWidth: 300,
-  },
-  {
-    field: 'totalLesson',
-    headerName: 'Số bài',
-  },
-];
-
 const sx: SxProps = {
   '& .MuiDataGrid-columnHeader:focus': {
     outline: 'none !important',
@@ -121,6 +73,52 @@ const style: SxProps = {
 
 const UnitList = ({ unitList: rows }: any) => {
   const [open, setOpen] = useState(false);
+
+  const columns: GridColDef[] = [
+    {
+      field: 'action',
+      headerName: '',
+      sortable: false,
+      disableColumnMenu: true,
+      width: 140,
+      renderCell: (params) => (
+        <>
+          <Tooltip title="Chỉnh sửa">
+            <Link to={`unit/${params.row.id}`}>
+              <IconButton>
+                <EditIcon />
+              </IconButton>
+            </Link>
+          </Tooltip>
+          <Tooltip title="Tăng thứ tự">
+            <IconButton disabled={params.row.numericOrder === 1}>
+              <ArrowUpwardIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Giảm thứ tự">
+            <IconButton disabled={params.row.numericOrder === rows?.length}>
+              <ArrowDownwardIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      ),
+    },
+    {
+      field: 'numericOrder',
+      headerName: 'Thứ tự',
+    },
+    { field: 'id', headerName: 'ID' },
+    {
+      field: 'name',
+      headerName: 'Tên',
+      flex: 1,
+      minWidth: 300,
+    },
+    {
+      field: 'totalLesson',
+      headerName: 'Số bài',
+    },
+  ];
 
   const handleClose = () => {
     setOpen(false);

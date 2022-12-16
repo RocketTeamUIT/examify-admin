@@ -35,11 +35,14 @@ const validationSchema = yup.object().shape({
 });
 
 const LessonForm = ({ lesson }: any) => {
-  const handleFormSubmit = (data: any) => {
-    console.log(data);
-  };
   const [open, setOpen] = useState<boolean>(false);
   const [type, setType] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [videoTime, setVideoTime] = useState<number>(0);
+
+  const handleFormSubmit = (data: any) => {
+    console.log({ ...data, videoTime });
+  };
 
   const initialValues = lesson
     ? {
@@ -74,11 +77,6 @@ const LessonForm = ({ lesson }: any) => {
     );
   };
 
-  const handleTypeChange = (e: SelectChangeEvent<string>) => {
-    setType(Number(e.target.value));
-    handleChange(e);
-  };
-
   const handleOpen = () => {
     setOpen(true);
   };
@@ -92,6 +90,21 @@ const LessonForm = ({ lesson }: any) => {
       onSubmit: handleFormSubmit,
       validationSchema,
     });
+
+  const handleTypeChange = (e: SelectChangeEvent<string>) => {
+    setType(Number(e.target.value));
+    handleChange(e);
+    setLoading(false);
+    setFieldValue('videoUrl', '');
+  };
+
+  const disableButton = () => {
+    return isValuesNotChanged() || loading;
+  };
+
+  const updateVideoTime = (value: number) => {
+    setVideoTime(value);
+  };
 
   return (
     <form
@@ -162,6 +175,8 @@ const LessonForm = ({ lesson }: any) => {
 
       {type === 1 && (
         <VideoForm
+          setLoading={setLoading}
+          updateVideoTime={updateVideoTime}
           touched={touched}
           values={values}
           handleBlur={handleBlur}
@@ -186,7 +201,7 @@ const LessonForm = ({ lesson }: any) => {
         <PrimaryButton variant="outlined" color="error" onClick={handleOpen}>
           Xoá bài này
         </PrimaryButton>
-        <PrimaryButton disabled={isValuesNotChanged()} variant="contained" type="submit">
+        <PrimaryButton disabled={disableButton()} variant="contained" type="submit">
           Lưu
         </PrimaryButton>
       </Box>

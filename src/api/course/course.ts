@@ -1,4 +1,5 @@
 import axiosBase from 'api/axios';
+import { ICourse } from './courseInterface';
 
 export const getAllCoursesService = () => {
   return axiosBase.get('/courses');
@@ -25,5 +26,11 @@ export const searchCourseService = (searchValue: string) => {
     params: {
       q: searchValue,
     },
+  });
+};
+
+export const createNewCourseService = (data: ICourse) => {
+  return axiosBase.post('/courses', {
+    ...data,
   });
 };

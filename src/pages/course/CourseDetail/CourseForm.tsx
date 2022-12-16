@@ -9,59 +9,34 @@ import { FormControl, FormHelperText, MenuItem, Select } from '@mui/material';
 import CustomTextField from '../../../components/common/CustomTextField';
 import AlertDialog from '../AlertDialog';
 import CourseCKEditor from '../CourseCKEditor';
+import { ChangeEvent } from 'react';
 
 const sx: SxProps = {
   mt: '24px',
 };
 
 const CourseForm = ({ course }: any) => {
+  const initialValues = useMemo(() => {
+    return {
+      pointToUnlock: String(course.pointToUnlock),
+      price: String(course.price),
+      discount: String(course.discount),
+      pointReward: String(course.pointReward),
+      courseType: course.charges ? 'paid' : 'free',
+      level: String(course.level),
+      courseTitle: String(course.name),
+      description: String(course.description),
+      achieves: String(course.achieves),
+      image: String(course.image),
+    };
+  }, [course]);
+
+  useEffect(() => {
+    setCourseType(String(course.charges ? 'paid' : 'free'));
+  }, [course]);
   const [courseType, setCourseType] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
   const ref = useRef<HTMLInputElement>(null);
-
-  const {
-    pointToUnlock,
-    price,
-    discount,
-    charges,
-    pointReward,
-    level,
-    name,
-    description,
-    achieves,
-    image,
-  } = course;
-
-  const initialValues = {
-    pointToUnlock: String(pointToUnlock),
-    price: String(price),
-    discount: String(discount),
-    pointReward: String(pointReward),
-    courseType: charges ? 'paid' : 'free',
-    level: String(level),
-    courseTitle: String(name),
-    description: String(description),
-    achieves: String(achieves),
-    image: String(image),
-  };
-
-  useEffect(() => {
-    setCourseType(String(charges ? 'paid' : 'free'));
-  }, [charges]);
-
-  const isValueNotChanged = () => {
-    return (
-      initialValues.pointToUnlock === values.pointToUnlock &&
-      initialValues.price === values.price &&
-      initialValues.discount === values.discount &&
-      initialValues.pointReward === values.pointReward &&
-      initialValues.courseType === values.courseType &&
-      initialValues.level === values.level &&
-      initialValues.description === values.description &&
-      initialValues.achieves === values.achieves &&
-      initialValues.courseTitle === values.courseTitle
-    );
-  };
 
   const courseSchema = useMemo(
     () =>
@@ -105,10 +80,35 @@ const CourseForm = ({ course }: any) => {
         courseTitle: yup.string().required('Mục này không được để trống'),
         description: yup.string().required('Mục này không được để trống'),
         achieves: yup.string().required('Mục này không được để trống'),
-        image: yup.string().required('Mục này không được để trống'),
+        image: yup.string().required('Bạn phải tải lên 1 ảnh'),
       }),
     []
   );
+
+  const handleFormSubmit = (data: Object) => {
+    console.log(data);
+  };
+
+  const {
+    values,
+    errors,
+    touched,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+    setValues,
+  } = useFormik({
+    initialValues,
+    onSubmit: handleFormSubmit,
+    validationSchema: courseSchema,
+  });
+
+  useEffect(() => {
+    if (initialValues && setValues) {
+      setValues(initialValues);
+    }
+  }, [initialValues, setValues]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -121,21 +121,35 @@ const CourseForm = ({ course }: any) => {
     ref.current && ref.current.click();
   };
 
-  const handleFormSubmit = (data: Object) => {
-    console.log(data);
-  };
-
   const handleTypeChange = (e: SelectChangeEvent<string>, fn: any) => {
     setCourseType(e.target.value);
     fn(e);
   };
 
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue } =
-    useFormik({
-      initialValues,
-      onSubmit: handleFormSubmit,
-      validationSchema: courseSchema,
-    });
+  const isValueNotChanged = () => {
+    return (
+      initialValues.pointToUnlock === values.pointToUnlock &&
+      initialValues.price === values.price &&
+      initialValues.discount === values.discount &&
+      initialValues.pointReward === values.pointReward &&
+      initialValues.courseType === values.courseType &&
+      initialValues.level === values.level &&
+      initialValues.description === values.description &&
+      initialValues.achieves === values.achieves &&
+      initialValues.courseTitle === values.courseTitle
+    );
+  };
+
+  const handleUploadImage = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target);
+
+    if (e.target.files) {
+      const image = e.target.files[0];
+      const tempImageUrl = URL.createObjectURL(image);
+      console.log(tempImageUrl);
+      setFieldValue('image', tempImageUrl);
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -150,7 +164,7 @@ const CourseForm = ({ course }: any) => {
         {/* Image */}
         <Box
           border="solid 1px"
-          borderColor={colors.grey.light}
+          borderColor={!!touched.image && !!errors.image ? colors.red[500] : colors.grey.light}
           width="100%"
           borderRadius="10px"
           overflow="hidden"
@@ -158,18 +172,28 @@ const CourseForm = ({ course }: any) => {
             aspectRatio: '3/2',
           }}
         >
-          <img
-            src={values.image}
-            alt={values.courseTitle}
-            style={{
-              height: '100%',
-              width: '100%',
-              objectFit: 'cover',
-            }}
-          />
+          {values.image && (
+            <img
+              src={values.image}
+              alt={values.courseTitle}
+              style={{
+                height: '100%',
+                width: '100%',
+                objectFit: 'cover',
+              }}
+            />
+          )}
         </Box>
+        <FormHelperText
+          sx={{
+            color: colors.red[500],
+            ml: '16px',
+          }}
+        >
+          {!!touched.image && errors.image}
+        </FormHelperText>
         <PrimaryButton onClick={triggerFileInput} variant="outlined" sx={{ ...sx, width: '100%' }}>
-          Thêm ảnh
+          Thay đổi ảnh
         </PrimaryButton>
 
         {/* Input list */}
@@ -324,6 +348,7 @@ const CourseForm = ({ course }: any) => {
 
         <input
           accept=".jpg, .png"
+          onChange={handleUploadImage}
           type="file"
           style={{
             display: 'none',

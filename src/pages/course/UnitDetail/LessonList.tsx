@@ -9,63 +9,6 @@ import PrimaryButton from 'components/common/PrimaryButton';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-type Props = {};
-
-const columns: GridColDef[] = [
-  {
-    field: 'action',
-    headerName: '',
-    sortable: false,
-    disableColumnMenu: true,
-    width: 140,
-    renderCell: (params) => (
-      <>
-        <Tooltip title="Chỉnh sửa">
-          <Link to={`lesson/${params.row.id}`}>
-            <IconButton>
-              <EditIcon />
-            </IconButton>
-          </Link>
-        </Tooltip>
-        <Tooltip title="Tăng thứ tự">
-          <IconButton>
-            <ArrowUpwardIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Giảm thứ tự">
-          <IconButton>
-            <ArrowDownwardIcon />
-          </IconButton>
-        </Tooltip>
-      </>
-    ),
-  },
-  { field: 'numericOrder', headerName: 'Thứ tự' },
-  { field: 'id', headerName: 'ID' },
-  {
-    field: 'name',
-    headerName: 'Tên',
-    flex: 1,
-    minWidth: 300,
-  },
-  {
-    field: 'type',
-    headerName: 'Loại',
-  },
-  {
-    field: 'createdAt',
-    headerName: 'Ngày tạo',
-    minWidth: 200,
-    renderCell: (params) => params.value.slice(0, 19).split('T').join(' '),
-  },
-  {
-    field: 'updatedAt',
-    headerName: 'Ngày cập nhật',
-    minWidth: 200,
-    renderCell: (params) => params.value.slice(0, 19).split('T').join(' '),
-  },
-];
-
 const sx: SxProps = {
   '& .MuiDataGrid-columnHeader:focus': {
     outline: 'none !important',
@@ -113,6 +56,61 @@ const sx: SxProps = {
 };
 
 const LessonList = ({ lessonList: rows }: any) => {
+  const columns: GridColDef[] = [
+    {
+      field: 'action',
+      headerName: '',
+      sortable: false,
+      disableColumnMenu: true,
+      width: 140,
+      renderCell: (params) => (
+        <>
+          <Tooltip title="Chỉnh sửa">
+            <Link to={`lesson/${params.row.id}`}>
+              <IconButton>
+                <EditIcon />
+              </IconButton>
+            </Link>
+          </Tooltip>
+          <Tooltip title="Tăng thứ tự">
+            <IconButton disabled={params.row.numericOrder === 1}>
+              <ArrowUpwardIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Giảm thứ tự">
+            <IconButton disabled={params.row.numericOrder === rows?.length}>
+              <ArrowDownwardIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      ),
+    },
+    { field: 'numericOrder', headerName: 'Thứ tự' },
+    { field: 'id', headerName: 'ID' },
+    {
+      field: 'name',
+      headerName: 'Tên',
+      flex: 1,
+      minWidth: 300,
+    },
+    {
+      field: 'type',
+      headerName: 'Loại',
+    },
+    {
+      field: 'createdAt',
+      headerName: 'Ngày tạo',
+      minWidth: 200,
+      renderCell: (params) => params.value.slice(0, 19).split('T').join(' '),
+    },
+    {
+      field: 'updatedAt',
+      headerName: 'Ngày cập nhật',
+      minWidth: 200,
+      renderCell: (params) => params.value.slice(0, 19).split('T').join(' '),
+    },
+  ];
+
   if (!rows || !Array.isArray(rows)) return null;
 
   return (
