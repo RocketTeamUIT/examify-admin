@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, isAnyOf } from '@reduxjs/toolkit';
 import { getCourseDetailService } from 'api/course/course';
-import { getUnitListWithChapterId } from './utils';
+import { findChapterIndexById } from './utils';
 
 interface IState {
   course: any;
@@ -37,6 +37,39 @@ const courseSlice = createSlice({
     finish: (state) => {
       state.isLoading = false;
     },
+    updateCourse: (state, action) => {
+      state.course = {
+        ...state.course,
+        ...action.payload,
+      };
+    },
+    addChapter: (state, action) => {
+      (state.course.chapterList || []).push(action.payload);
+    },
+    updateChapter: (state, action) => {
+      const updatedChapter = action.payload;
+      const chapterIndex = findChapterIndexById(state.course, updatedChapter.id);
+
+      if (chapterIndex !== -1) {
+        const oldChapter = state.course.chapterList[chapterIndex];
+        state.course.chapterList[chapterIndex] = {
+          ...oldChapter,
+          ...updatedChapter,
+        };
+      }
+    },
+    deleteChapter: (state, action) => {
+      state.course.chapterList = state.course.chapterList.filter(
+        (chapter: any) => chapter.id !== action.payload
+      );
+    },
+    addUnit: (state, action) => {
+      const newUnit = action.payload;
+      const chapterIndex = findChapterIndexById(state.course, newUnit.chapterId);
+      if (chapterIndex !== -1) {
+        state.course.chapterList[chapterIndex].unitList.push(newUnit);
+      }
+    },
   },
   extraReducers: (builder) => {
     // Get all courses
@@ -65,5 +98,8 @@ const courseSlice = createSlice({
     });
   },
 });
+
+export const { pending, finish, updateCourse, addChapter, updateChapter, deleteChapter, addUnit } =
+  courseSlice.actions;
 
 export default courseSlice.reducer;

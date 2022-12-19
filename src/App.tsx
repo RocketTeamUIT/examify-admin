@@ -10,6 +10,8 @@ import ChapterDetail from 'pages/course/ChapterDetail/ChapterDetail';
 import UnitDetail from 'pages/course/UnitDetail';
 import LessonDetail from 'pages/course/LessonDetail/LessonDetail';
 import DetailLayout from 'components/layout/DetailLayout';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -52,6 +54,19 @@ function App() {
           <Route element={<AuthLayout />}>{authenticationRoutes}</Route>
         </Routes>
       </BrowserRouter>
+
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </ThemeProvider>
   );
 }

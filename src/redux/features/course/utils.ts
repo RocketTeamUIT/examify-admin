@@ -14,3 +14,13 @@ export const getUnitListWithChapterId = (course: any) => {
 
   return unitList;
 };
+
+export const findChapterIndexById = (course: any, id: number): number => {
+  let result = -1;
+  (course.chapterList || []).forEach((chapter: any, index: number) => {
+    if (chapter.id === Number(id)) {
+      result = index;
+    }
+  });
+  return result;
+};

@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import useAxiosPrivate from 'hooks/useAxiosPrivate';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { getUserInfo } from 'redux/features/auth/authSlice';
 import colorConfigs from '../../configs/colorConfigs';
 import { toggleBar } from '../../redux/features/appStateSlice';
@@ -13,9 +13,15 @@ const MainLayout = () => {
   const { hideBar } = useSelector((store: RootState) => store.appState);
   const dispatch = useDispatch<AppDispatch>();
   const axiosPrivate = useAxiosPrivate();
+  const location = useLocation();
+
   useEffect(() => {
     dispatch(getUserInfo(axiosPrivate));
-  }, []);
+  }, [axiosPrivate, dispatch]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
 
   return (
     <Box sx={{ display: 'flex' }}>

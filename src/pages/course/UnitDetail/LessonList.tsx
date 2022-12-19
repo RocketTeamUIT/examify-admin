@@ -1,5 +1,5 @@
 import { IconButton, Box, SxProps, Tooltip } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { colors } from 'theme';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import CustomToolbar from 'components/common/CustomToolbar';
@@ -8,6 +8,13 @@ import PrimaryButton from 'components/common/PrimaryButton';
 
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import getBiggestOrder from 'utils/getBiggestOrder';
+import { useState } from 'react';
+import { updateLessonService } from 'api/course/course';
+import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { getCourseDetail } from 'redux/features/course/courseSlice';
+import { AppDispatch } from 'redux/store';
 
 const sx: SxProps = {
   '& .MuiDataGrid-columnHeader:focus': {
@@ -56,6 +63,32 @@ const sx: SxProps = {
 };
 
 const LessonList = ({ lessonList: rows }: any) => {
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { courseId } = useParams();
+
+  const changeOrder = async (numericOrder: number, value: number) => {
+    if (courseId) {
+      setLoading(true);
+      const lesson1 = rows.find((row: any) => row.numericOrder === numericOrder);
+      const chapter1Order = numericOrder;
+      const lesson2 = rows.find((row: any) => row.numericOrder === chapter1Order + value);
+      const chapter2Order = lesson2.numericOrder;
+      try {
+        await updateLessonService({ ...lesson1, numericOrder: -1 });
+        await updateLessonService({ ...lesson2, numericOrder: chapter1Order });
+        await updateLessonService({ ...lesson1, numericOrder: chapter2Order });
+        toast.success('Thay đổi thứ tự thành công');
+        dispatch(getCourseDetail(courseId));
+      } catch (error) {
+        toast.error('Lỗi khi thay đổi thứ tự');
+        console.log('🚀 ~ file: ChapterList.tsx:111 ~ changeOrder ~ error', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   const columns: GridColDef[] = [
     {
       field: 'action',
@@ -73,12 +106,18 @@ const LessonList = ({ lessonList: rows }: any) => {
             </Link>
           </Tooltip>
           <Tooltip title="Tăng thứ tự">
-            <IconButton disabled={params.row.numericOrder === 1}>
+            <IconButton
+              onClick={() => changeOrder(params.row.numericOrder, -1)}
+              disabled={params.row.numericOrder === 1 || loading}
+            >
               <ArrowUpwardIcon />
             </IconButton>
           </Tooltip>
           <Tooltip title="Giảm thứ tự">
-            <IconButton disabled={params.row.numericOrder === rows?.length}>
+            <IconButton
+              onClick={() => changeOrder(params.row.numericOrder, 1)}
+              disabled={params.row.numericOrder === getBiggestOrder(rows) || loading}
+            >
               <ArrowDownwardIcon />
             </IconButton>
           </Tooltip>
@@ -113,13 +152,14 @@ const LessonList = ({ lessonList: rows }: any) => {
 
   if (!rows || !Array.isArray(rows)) return null;
 
+  if (!courseId) return null;
+
   return (
     <Box display="flex" height="calc(100vh - 50px)" flexDirection="column">
       <Box display="flex" justifyContent="right">
         <Link to="lesson/create" key="1">
           <PrimaryButton variant="contained">Tạo mới</PrimaryButton>
         </Link>
-        ,
       </Box>
 
       <Box flex="1" mt="12px">

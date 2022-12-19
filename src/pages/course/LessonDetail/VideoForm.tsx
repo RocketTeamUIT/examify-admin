@@ -3,7 +3,7 @@ import CustomTextField from 'components/common/CustomTextField';
 import YouTube, { YouTubeEvent } from 'react-youtube';
 import getYouTubeID from 'get-youtube-id';
 
-const style = {
+const playerStyle = {
   width: '100%',
   height: '100%',
 };
@@ -23,6 +23,7 @@ const VideoForm = ({
   errors,
   setLoading,
   updateVideoTime,
+  style,
 }: any) => {
   const getDuration = (e: YouTubeEvent) => {
     setLoading((prev: any) => false);
@@ -35,7 +36,7 @@ const VideoForm = ({
   };
 
   return (
-    <>
+    <Box sx={style}>
       <CustomTextField
         label="URL"
         helperText={!!touched.videoUrl && errors.videoUrl}
@@ -60,12 +61,12 @@ const VideoForm = ({
           <YouTube
             onReady={getDuration}
             videoId={getYouTubeID(values.videoUrl) || ''}
-            style={style}
-            opts={style}
+            style={playerStyle}
+            opts={playerStyle}
           />
         </Box>
       )}
-    </>
+    </Box>
   );
 };
 

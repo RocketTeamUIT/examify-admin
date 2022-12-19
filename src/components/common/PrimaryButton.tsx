@@ -1,8 +1,8 @@
-import Button from '@mui/material/Button/Button';
 import { colors } from '../../theme';
 import { styled } from '@mui/system';
+import { LoadingButton } from '@mui/lab';
 
-const PrimaryButton = styled(Button)(({ variant, disabled }) => ({
+const PrimaryButton = styled(LoadingButton)(({ variant, disabled }) => ({
   color: variant === 'contained' && !disabled ? '#fff' : undefined,
   bgcolor: variant === 'contained' && !disabled ? colors.primary[500] : undefined,
   textTransform: 'none',

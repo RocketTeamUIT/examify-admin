@@ -11,33 +11,61 @@ const validationSchema = yup.object().shape({
   name: yup.string().required('Bắt buộc nhập trường này'),
 });
 
-interface ITinyForm {
-  handleFormSubmit: (values: any) => void;
-  title?: string;
-  data?: any;
+export interface IValues {
+  name: string;
 }
 
-const TinyForm = ({ handleFormSubmit, title, data }: ITinyForm) => {
+interface ITinyForm {
+  handleFormSubmit: (values: IValues) => Promise<void>;
+  title?: string;
+  data?: any;
+  isCreate?: boolean;
+  handleDelete?: () => Promise<void>;
+}
+
+const TinyForm = ({
+  handleFormSubmit: outerHandleFormSubmit,
+  title,
+  data,
+  isCreate,
+  handleDelete,
+}: ITinyForm) => {
   const initialValues = {
     name: String(data?.name || ''),
   };
+  const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
+
+  const handleFormSubmit = async (data: IValues) => {
+    setLoading(true);
+    await outerHandleFormSubmit(data);
+    setLoading(false);
+  };
+
   const { touched, values, handleBlur, handleChange, handleSubmit, errors } = useFormik({
     initialValues,
     onSubmit: handleFormSubmit,
     validationSchema,
   });
 
-  const handleOpen = () => {
+  const handleOpenAlert = () => {
     setOpen(true);
   };
-  const handleClose = () => {
+  const handleCloseAlert = () => {
     setOpen(false);
   };
 
   const isValuesNotChanged = () => {
     return initialValues.name === values.name;
   };
+
+  const handleConfirmDelete = async () => {
+    setLoading(true);
+    handleDelete && (await handleDelete());
+    setLoading(false);
+  };
+
+  const disabled = isValuesNotChanged() || loading;
 
   return (
     <form
@@ -64,26 +92,25 @@ const TinyForm = ({ handleFormSubmit, title, data }: ITinyForm) => {
       />
 
       <Box display="flex" gap="20px" mt="40px">
-        <PrimaryButton
-          variant="outlined"
-          color="error"
-          sx={{
-            flex: '1',
-          }}
-          onClick={handleOpen}
-        >
-          Xoá
-        </PrimaryButton>
-        <PrimaryButton
-          disabled={isValuesNotChanged()}
-          variant="contained"
-          type="submit"
-          sx={{ flex: '1' }}
-        >
+        {!isCreate && (
+          <PrimaryButton
+            variant="outlined"
+            color="error"
+            sx={{
+              flex: '1',
+            }}
+            onClick={handleOpenAlert}
+          >
+            Xoá
+          </PrimaryButton>
+        )}
+        <PrimaryButton disabled={disabled} variant="contained" type="submit" sx={{ flex: '1' }}>
           Lưu
         </PrimaryButton>
       </Box>
-      <AlertDialog open={open} handleClose={handleClose} />
+      {handleDelete && (
+        <AlertDialog onConfirm={handleConfirmDelete} open={open} handleClose={handleCloseAlert} />
+      )}
     </form>
   );
 };

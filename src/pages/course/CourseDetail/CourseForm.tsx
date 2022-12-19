@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import { SelectChangeEvent, SxProps } from '@mui/material';
-import { Formik, useFormik } from 'formik';
+import { useFormik } from 'formik';
 import { useRef, useState, useMemo, useEffect } from 'react';
 import PrimaryButton from '../../../components/common/PrimaryButton';
 import { colors } from '../../../theme';
@@ -10,13 +10,56 @@ import CustomTextField from '../../../components/common/CustomTextField';
 import AlertDialog from '../AlertDialog';
 import CourseCKEditor from '../CourseCKEditor';
 import { ChangeEvent } from 'react';
+import { uploadImageService } from 'api/image/image';
+import Typography from '@mui/material/Typography/Typography';
 
 const sx: SxProps = {
   mt: '24px',
 };
 
-const CourseForm = ({ course }: any) => {
+export interface IValues {
+  pointToUnlock: string;
+  price: string;
+  discount: string;
+  pointReward: string;
+  courseType: string;
+  level: string;
+  courseTitle: string;
+  description: string;
+  achieves: string;
+  image: string;
+}
+
+interface ICourseForm {
+  course?: any;
+  isCreate?: boolean;
+  handleFormSubmit: (data: IValues) => void;
+  handleDelete?: () => void;
+}
+
+const CourseForm = ({
+  course,
+  isCreate,
+  handleFormSubmit: outerHandleFormSubmit,
+  handleDelete,
+}: ICourseForm) => {
+  const [image, setImage] = useState<File>();
+
   const initialValues = useMemo(() => {
+    if (isCreate || !course)
+      return {
+        pointToUnlock: '',
+        price: '',
+        discount: '',
+        pointReward: '',
+        courseType: '',
+        level: '',
+        courseTitle: '',
+        description: '',
+        achieves: '',
+        image: '',
+      };
+
     return {
       pointToUnlock: String(course.pointToUnlock),
       price: String(course.price),
@@ -29,12 +72,13 @@ const CourseForm = ({ course }: any) => {
       achieves: String(course.achieves),
       image: String(course.image),
     };
-  }, [course]);
+  }, [course, isCreate]);
 
   useEffect(() => {
-    setCourseType(String(course.charges ? 'paid' : 'free'));
+    if (course) setCourseType(String(course.charges ? 'paid' : 'free'));
   }, [course]);
   const [courseType, setCourseType] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const ref = useRef<HTMLInputElement>(null);
 
@@ -85,8 +129,21 @@ const CourseForm = ({ course }: any) => {
     []
   );
 
-  const handleFormSubmit = (data: Object) => {
-    console.log(data);
+  const handleFormSubmit = async (data: IValues) => {
+    setLoading(true);
+    try {
+      let dataWithImage = { ...data };
+      if (data.image !== initialValues.image && image) {
+        const response = await uploadImageService(image, 'examify');
+        const url = response.data.url;
+        dataWithImage.image = url;
+      }
+      outerHandleFormSubmit(dataWithImage);
+    } catch (error) {
+      console.log('🚀 ~ file: CourseForm.tsx:129 ~ handleFormSubmit ~ error', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const {
@@ -136,17 +193,16 @@ const CourseForm = ({ course }: any) => {
       initialValues.level === values.level &&
       initialValues.description === values.description &&
       initialValues.achieves === values.achieves &&
-      initialValues.courseTitle === values.courseTitle
+      initialValues.courseTitle === values.courseTitle &&
+      initialValues.image === values.image
     );
   };
 
   const handleUploadImage = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target);
-
     if (e.target.files) {
       const image = e.target.files[0];
+      setImage(image);
       const tempImageUrl = URL.createObjectURL(image);
-      console.log(tempImageUrl);
       setFieldValue('image', tempImageUrl);
     }
   };
@@ -193,7 +249,7 @@ const CourseForm = ({ course }: any) => {
           {!!touched.image && errors.image}
         </FormHelperText>
         <PrimaryButton onClick={triggerFileInput} variant="outlined" sx={{ ...sx, width: '100%' }}>
-          Thay đổi ảnh
+          {!image ? 'Thêm ảnh' : 'Thay đổi ảnh'}
         </PrimaryButton>
 
         {/* Input list */}
@@ -326,23 +382,33 @@ const CourseForm = ({ course }: any) => {
         />
 
         <Box display="flex" gap="20px" mt="40px">
+          {!isCreate && (
+            <PrimaryButton
+              variant="outlined"
+              color="error"
+              sx={{
+                flex: '1',
+              }}
+              onClick={handleOpen}
+            >
+              Xoá khoá học này
+            </PrimaryButton>
+          )}
           <PrimaryButton
-            variant="outlined"
-            color="error"
-            sx={{
-              flex: '1',
-            }}
-            onClick={handleOpen}
-          >
-            Xoá khoá học này
-          </PrimaryButton>
-          <PrimaryButton
+            loading={loading}
             disabled={isValueNotChanged()}
             variant="contained"
             type="submit"
             sx={{ flex: '1' }}
           >
-            Lưu
+            <Typography
+              sx={{
+                textTransform: 'none',
+              }}
+              fontWeight="600"
+            >
+              Lưu
+            </Typography>
           </PrimaryButton>
         </Box>
 
@@ -357,7 +423,9 @@ const CourseForm = ({ course }: any) => {
         />
       </Box>
 
-      <AlertDialog open={open} handleClose={handleClose} />
+      {handleDelete && (
+        <AlertDialog open={open} handleClose={handleClose} onConfirm={handleDelete} />
+      )}
     </form>
   );
 };

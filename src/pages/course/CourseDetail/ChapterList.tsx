@@ -1,5 +1,5 @@
 import { IconButton, Box, SxProps, Tooltip } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { colors } from 'theme';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import CustomToolbar from 'components/common/CustomToolbar';
@@ -10,6 +10,13 @@ import { useState } from 'react';
 import TinyForm from '../TinyForm';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { IValues } from '../TinyForm';
+import { createChapterService, updateChapterService } from 'api/course/course';
+import { toast } from 'react-toastify';
+import { getCourseDetail } from 'redux/features/course/courseSlice';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from 'redux/store';
+import getBiggestOrder from 'utils/getBiggestOrder';
 
 const sx: SxProps = {
   '& .MuiDataGrid-columnHeader:focus': {
@@ -71,7 +78,46 @@ const style: SxProps = {
 };
 
 const ChapterList = ({ chapterList: rows }: any) => {
+  const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
+  const { courseId } = useParams();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleCreateChapter = async (data: IValues) => {
+    let order = getBiggestOrder(rows);
+    if (courseId)
+      try {
+        await createChapterService(courseId, order + 1, data.name);
+        dispatch(getCourseDetail(courseId));
+        toast.success('Tạo chương thành công');
+        handleClose();
+      } catch (error) {
+        toast.error('Tạo chương thất bại');
+        console.log('🚀 ~ file: ChapterList.tsx:91 ~ handleCreateChapter ~ error', error);
+      }
+  };
+
+  const changeOrder = async (numericOrder: number, value: number) => {
+    if (courseId) {
+      setLoading(true);
+      const chapter1 = rows.find((row: any) => row.numericOrder === numericOrder);
+      const chapter1Order = numericOrder;
+      const chapter2 = rows.find((row: any) => row.numericOrder === chapter1Order + value);
+      const chapter2Order = chapter2.numericOrder;
+      try {
+        await updateChapterService(chapter1.id, courseId, -1, chapter1.name);
+        await updateChapterService(chapter2.id, courseId, chapter1Order, chapter2.name);
+        await updateChapterService(chapter1.id, courseId, chapter2Order, chapter1.name);
+        toast.success('Thay đổi thứ tự thành công');
+        dispatch(getCourseDetail(courseId));
+      } catch (error) {
+        toast.error('Lỗi khi thay đổi thứ tự');
+        console.log('🚀 ~ file: ChapterList.tsx:111 ~ changeOrder ~ error', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   const columns: GridColDef[] = [
     {
@@ -90,12 +136,18 @@ const ChapterList = ({ chapterList: rows }: any) => {
             </Link>
           </Tooltip>
           <Tooltip title="Tăng thứ tự">
-            <IconButton disabled={params.row.numericOrder === 1}>
+            <IconButton
+              disabled={params.row.numericOrder === 1 || loading}
+              onClick={() => changeOrder(params.row.numericOrder, -1)}
+            >
               <ArrowUpwardIcon />
             </IconButton>
           </Tooltip>
           <Tooltip title="Giảm thứ tự">
-            <IconButton disabled={params.row.numericOrder === rows?.length}>
+            <IconButton
+              disabled={params.row.numericOrder === getBiggestOrder(rows) || loading}
+              onClick={() => changeOrder(params.row.numericOrder, +1)}
+            >
               <ArrowDownwardIcon />
             </IconButton>
           </Tooltip>
@@ -130,7 +182,7 @@ const ChapterList = ({ chapterList: rows }: any) => {
     <Box display="flex" height="calc(100vh - 50px)" flexDirection="column">
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
-          <TinyForm handleFormSubmit={() => {}} title="Thêm chương" />
+          <TinyForm isCreate handleFormSubmit={handleCreateChapter} title="Thêm chương" />
         </Box>
       </Modal>
 

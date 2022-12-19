@@ -2,6 +2,7 @@
 
 * {
   font-family: Inter, 'Helvetica', sans-serif !important;
+  word-wrap: break-word;
 }
 
 .ck-editor__editable {

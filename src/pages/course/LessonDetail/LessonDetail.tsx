@@ -52,7 +52,7 @@ const LessonDetail = ({ type }: { type?: string }) => {
       />
 
       <Box mt="24px">
-        <LessonForm lesson={lesson} />
+        <LessonForm isCreate={type === 'create'} lesson={lesson} />
       </Box>
     </Box>
   );
