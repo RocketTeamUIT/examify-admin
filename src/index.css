@@ -8,3 +8,7 @@
 .ck-editor__editable {
   min-height: 400px;
 }
+
+#sidebar::-webkit-scrollbar {
+  display: none;
+}

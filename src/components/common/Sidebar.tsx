@@ -54,53 +54,61 @@ const Sidebar = ({ toggle, showBar }: SidebarProps) => {
         disablePadding
         sx={{
           '&': {
-            height: '100%',
             position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            pb: '20px',
+            height: '100vh',
           },
         }}
       >
-        <Toolbar sx={{ margin: '8px 0 20px' }}>
-          <Stack
-            sx={{ width: '100%', paddingTop: '20px' }}
-            direction="row"
-            justifyContent="space-between"
-          >
-            <img style={{ width: '120px', height: 'auto' }} src={assets.images.logo} alt="s" />
-            <IconButton
-              aria-label="close"
-              size="medium"
-              onClick={toggle}
-              sx={{
-                position: 'absolute',
-                right: '-15px',
-                mr: '-5px',
-                bgcolor: 'white',
-                zIndex: 10,
-                boxShadow: '0 0 10px 0 rgba(0,0,0,0.25) !important',
-                '&:hover': {
-                  backgroundColor: '#ccc',
-                },
-              }}
-            >
-              <ChevronLeftIcon
-                sx={{
-                  color: 'black',
-                }}
-              />
-            </IconButton>
-          </Stack>
-        </Toolbar>
-        {appRoutes.map((route, index) => {
-          return route.sidebarProps ? (
-            route.child ? (
-              <SidebarItemCollapse item={route} key={index} />
-            ) : (
-              <SidebarItem item={route} key={index} />
-            )
-          ) : null;
-        })}
+        <IconButton
+          aria-label="close"
+          size="medium"
+          onClick={toggle}
+          sx={{
+            position: 'absolute',
+            top: '28px',
+            right: '-15px',
+            mr: '-5px',
+            bgcolor: 'white',
+            zIndex: 10,
+            boxShadow: '0 0 10px 0 rgba(0,0,0,0.25) !important',
+            '&:hover': {
+              backgroundColor: '#ccc',
+            },
+          }}
+        >
+          <ChevronLeftIcon
+            sx={{
+              color: 'black',
+            }}
+          />
+        </IconButton>
 
-        <Box width="100%" px="20px" bottom="24px" position="absolute">
+        <Box sx={{ overflowY: 'auto' }} id="sidebar">
+          <Toolbar sx={{ margin: '8px 0 20px' }}>
+            <Stack
+              sx={{ width: '100%', paddingTop: '20px' }}
+              direction="row"
+              justifyContent="space-between"
+            >
+              <img style={{ width: '120px', height: 'auto' }} src={assets.images.logo} alt="s" />
+            </Stack>
+          </Toolbar>
+          {appRoutes.map((route, index) => {
+            return route.sidebarProps ? (
+              route.child ? (
+                <SidebarItemCollapse item={route} key={index} />
+              ) : (
+                <SidebarItem item={route} key={index} />
+              )
+            ) : null;
+          })}
+        </Box>
+
+        <Box width="100%" px="20px" bottom="24px">
           <Typography
             color={colors.grey.bitDark}
             fontSize="12px"
