@@ -1,6 +1,6 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { Box, FormHelperText } from '@mui/material';
+import { Box, FormHelperText, Typography } from '@mui/material';
 
 const TextForm = ({ touched, values, errors, setFieldValue }) => {
   return (
@@ -12,6 +12,9 @@ const TextForm = ({ touched, values, errors, setFieldValue }) => {
         },
       }}
     >
+      <Typography fontWeight="bold" mt="24px" mb="12px">
+        Nội dung
+      </Typography>
       <CKEditor
         editor={ClassicEditor}
         data={values.text}
