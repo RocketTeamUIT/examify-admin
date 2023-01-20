@@ -19,7 +19,7 @@ import axios from '../axios';
 
 export const signInService = (email: string, password: string) => {
   return axios.post(
-    '/users/login',
+    '/auth/login',
     {
       email,
       password,
@@ -31,11 +31,11 @@ export const signInService = (email: string, password: string) => {
 };
 
 export const logOutService = (axiosPrivate: AxiosInstance) => {
-  return axiosPrivate.delete('/users/logout');
+  return axiosPrivate.delete('/auth/logout');
 };
 
 export const refreshTokenService = () => {
-  return axios.post('/users/refresh-token', {}, { withCredentials: true });
+  return axios.post('/auth/refresh-token', {}, { withCredentials: true });
 };
 
 // User
