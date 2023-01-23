@@ -6,7 +6,7 @@ import DashboardIndex from '../pages/dashboard/DashboardIndex';
 import AnalyticsPage from '../pages/dashboard/AnalyticsPage';
 import SassPage from '../pages/dashboard/SassPage';
 import { BiHomeAlt, BiLayout, BiDetail } from 'react-icons/bi';
-import CourseIndex from '../pages/course/CourseIndex';
+import { AiFillCreditCard } from 'react-icons/ai';
 import CourseListPage from '../pages/course/CourseListPage';
 import CoursePageLayout from '../pages/course/CoursePageLayout';
 import ExamPageLayout from '../pages/exam/ExamPageLayout';
@@ -14,6 +14,8 @@ import ExamIndex from '../pages/exam/ExamIndex';
 import ExamListPage from '../pages/exam/ExamListPage';
 import ExamCreatePage from '../pages/exam/ExamCreatePage';
 import CourseCreatePage from '../pages/course/CourseCreatePage';
+import { Outlet } from 'react-router-dom';
+import { FlashcardType } from 'pages/flashcard';
 
 const appRoutes: RouteType[] = [
   {
@@ -117,6 +119,34 @@ const appRoutes: RouteType[] = [
         state: 'exam.create',
         sidebarProps: {
           displayText: 'Tạo',
+        },
+      },
+    ],
+  },
+  {
+    path: '/flashcard',
+    element: <Outlet />,
+    state: 'flashcard',
+    sidebarProps: {
+      displayText: 'Flashcard',
+      icon: <AiFillCreditCard size={24} />,
+    },
+    child: [
+      {
+        index: true,
+        path: '/flashcard/type',
+        element: <FlashcardType />,
+        state: 'flashcard.type',
+        sidebarProps: {
+          displayText: 'Loại flashcard',
+        },
+      },
+      {
+        path: '/flashcard/set',
+        element: <CourseCreatePage />,
+        state: 'flashcard.set',
+        sidebarProps: {
+          displayText: 'Bộ flashcard',
         },
       },
     ],
