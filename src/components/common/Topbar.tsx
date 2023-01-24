@@ -59,7 +59,16 @@ const Topbar: FC<TopbarProps> = ({ title, buttons, breadcrumbs, ribbonColor }) =
             {ribbonColor && <Box display="flex" flex="1" bgcolor={ribbonColor} />}
           </Box>
 
-          <Box ml="auto">{buttons}</Box>
+          <Box
+            ml="auto"
+            sx={{
+              display: 'flex',
+              gap: '16px',
+              flexShrink: '0',
+            }}
+          >
+            {buttons}
+          </Box>
         </Box>
       </Toolbar>
       {breadcrumbs && (

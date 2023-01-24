@@ -12,6 +12,7 @@ import LessonDetail from 'pages/course/LessonDetail/LessonDetail';
 import DetailLayout from 'components/layout/DetailLayout';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import FlashcardSetDetail from 'pages/flashcard/FlashcardSetDetail';
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -49,6 +50,10 @@ function App() {
                 path="/course/:courseId/chapter/:chapterId/unit/:unitId/lesson/create"
                 element={<LessonDetail type="create" />}
               />
+            </Route>
+
+            <Route path="/flashcard/set">
+              <Route path="/flashcard/set/:flashcardSetId" element={<FlashcardSetDetail />} />
             </Route>
           </Route>
           <Route element={<AuthLayout />}>{authenticationRoutes}</Route>
