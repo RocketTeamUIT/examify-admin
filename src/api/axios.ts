@@ -15,6 +15,10 @@ const axiosImage = axios.create({
   baseURL: `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
 });
 
+export const dictionary = axios.create({
+  baseURL: 'https://api.dictionaryapi.dev/api/v2/entries/en',
+});
+
 export { axiosPrivate, axiosImage };
 
 export default axiosBase;

@@ -1,49 +1,61 @@
 import { useFormik } from 'formik';
 import { useEffect, useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, FormControl, Select, MenuItem, FormHelperText } from '@mui/material';
 import * as yup from 'yup';
 import CustomTextField from 'components/common/CustomTextField';
 import PrimaryButton from 'components/common/PrimaryButton';
 import AlertDialog from 'pages/course/AlertDialog';
 import {
-  IFlashcardType,
-  INewFlashcardType,
-  IUpdateFlashcardType,
+  IFlashcardSet,
+  INewFlashcardSet,
+  IUpdateFlashcardSet,
 } from 'api/flashcard/flashcardInterface';
-import {
-  createFlashcardTypeService,
-  deleteFlashcardTypeService,
-  updateFlashcardTypeService,
-} from 'api/flashcard/flashcard';
+
 import { toast } from 'react-toastify';
+import useFetchFlashcardType from './hooks/useFetchFlashcardType';
+import useAxiosPrivate from 'hooks/useAxiosPrivate';
+import {
+  createFlashcardSetService,
+  deleteFlashcardSetService,
+  updateFlashcardSetService,
+} from 'api/flashcard/flashcard';
 
 const validationSchema = yup.object().shape({
-  type: yup.string().required('Bắt buộc nhập trường này'),
+  name: yup.string().required('Bắt buộc nhập trường này'),
   description: yup.string().required('Bắt buộc nhập trường này'),
+  fc_type_id: yup
+    .number()
+    .required('Bắt buộc nhập trường này')
+    .not([0], 'Bắt buộc nhập trường này'),
 });
 
-interface IFlashcardModal {
+interface IFlashcardSetModal {
   isCreate?: boolean;
-  onCreate?: (data: IFlashcardType) => void;
-  initialData?: IUpdateFlashcardType;
+  onCreate?: (data: IFlashcardSet) => void;
+  initialData?: IUpdateFlashcardSet;
   onUpdate?: () => void;
   onDelete?: (id: number) => void;
   hide: (data?: any) => void;
+  hideTitle?: boolean;
 }
 
-function AddFlashcardTypeModal({
+function AddFlashcardSetModal({
   isCreate,
   onCreate,
   initialData,
   onUpdate,
   onDelete,
   hide,
-}: IFlashcardModal) {
+  hideTitle = false,
+}: IFlashcardSetModal) {
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
+  const { types } = useFetchFlashcardType();
+  const axios = useAxiosPrivate(true);
 
   const initialValues = initialData ?? {
-    type: '',
+    fc_type_id: 0,
+    name: '',
     description: '',
   };
   const { touched, values, handleBlur, handleChange, handleSubmit, errors, resetForm } = useFormik({
@@ -60,42 +72,42 @@ function AddFlashcardTypeModal({
     }
   }, [initialData, resetForm]);
 
-  function handleFormSubmit(data: INewFlashcardType) {
+  function handleFormSubmit(data: INewFlashcardSet) {
     if (isCreate) {
-      createFlashcardType(data);
+      createFlashcardSet(data);
     } else if (initialData) {
-      updateFlashcardType({
+      updateFlashcardSet({
         ...data,
         id: initialData.id,
       });
     }
   }
 
-  async function createFlashcardType(data: INewFlashcardType) {
+  async function createFlashcardSet(data: INewFlashcardSet) {
     try {
       setLoading(true);
-      const response = await createFlashcardTypeService(data);
+      const response = await createFlashcardSetService({ axios, ...data });
       if (onCreate)
         onCreate({
           ...response.data.data,
-          id: response.data.data.fc_type_id,
+          id: response.data.data.fc_set_id,
         });
-      toast.success('Thêm loại flashcard thành công');
+      toast.success('Thêm bộ flashcard thành công');
       hide();
     } catch (error) {
+      console.log('🚀 ~ file: AddFlashcardSetModal.tsx:93 ~ createFlashcardType ~ error', error);
       toast.error('Thêm thất bại');
-      console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:38 ~ handleFormSubmit ~ error', error);
     } finally {
       setLoading(false);
     }
   }
 
-  async function updateFlashcardType(data: IUpdateFlashcardType) {
+  async function updateFlashcardSet(data: IUpdateFlashcardSet) {
     try {
       setLoading(true);
-      await updateFlashcardTypeService(data);
+      await updateFlashcardSetService({ ...data, axios });
       if (onUpdate) onUpdate();
-      toast.success('Cập nhật loại flashcard thành công');
+      toast.success('Cập nhật bộ flashcard thành công');
       hide();
     } catch (error) {
       toast.error('Cập nhật thất bại');
@@ -107,9 +119,17 @@ function AddFlashcardTypeModal({
 
   function isValuesNotChanged() {
     if (isCreate) {
-      return initialValues.type === values.type && initialValues.description === values.description;
+      return (
+        initialValues.name === values.name &&
+        initialValues.description === values.description &&
+        initialValues.fc_type_id === values.fc_type_id
+      );
     } else if (initialData) {
-      return initialData.type === values.type && initialData.description === values.description;
+      return (
+        initialData.name === values.name &&
+        initialData.description === values.description &&
+        initialData.fc_type_id === values.fc_type_id
+      );
     }
     return true;
   }
@@ -118,7 +138,7 @@ function AddFlashcardTypeModal({
     setLoading(true);
     try {
       if (initialData) {
-        await deleteFlashcardTypeService(initialData.id);
+        await deleteFlashcardSetService({ axios, fc_set_id: initialData.id });
         if (onDelete) onDelete(initialData.id);
         toast.success('Xoá thành công');
         hide();
@@ -145,21 +165,55 @@ function AddFlashcardTypeModal({
         maxWidth: '600px',
       }}
     >
-      <Typography variant="h5" fontWeight="bold" mb="20px" textAlign="center">
-        {isCreate ? 'Thêm loại flashcard mới' : 'Chỉnh sửa loại flashcard'}
-      </Typography>
+      {!hideTitle && (
+        <Typography variant="h5" fontWeight="bold" mb="20px" textAlign="center">
+          Thêm loại flashcard mới
+        </Typography>
+      )}
       <CustomTextField
         label="Tên"
-        helperText={!!touched.type && errors.type}
+        helperText={!!touched.name && errors.name}
         inputProps={{
           placeholder: 'Tên',
-          value: values.type,
+          value: values.name,
           onBlur: handleBlur,
           onChange: handleChange,
-          error: !!touched.type && !!errors.type,
-          name: 'type',
+          error: !!touched.name && !!errors.name,
+          name: 'name',
         }}
       />
+      <FormControl
+        error={!!touched.fc_type_id && !!errors.fc_type_id}
+        sx={{ mt: '24px', width: '100%', display: 'flex' }}
+      >
+        <label
+          style={{
+            fontWeight: 'bold',
+            color: '#000 !important',
+          }}
+        >
+          Loại
+        </label>
+        <Select
+          sx={{
+            mt: '3px',
+          }}
+          value={values.fc_type_id}
+          onBlur={handleBlur}
+          onChange={handleChange}
+          name="fc_type_id"
+        >
+          <MenuItem value={0} disabled>
+            Chọn
+          </MenuItem>
+          {types.map((type) => (
+            <MenuItem key={type.fc_type_id} value={type.fc_type_id}>
+              {type.type}
+            </MenuItem>
+          ))}
+        </Select>
+        <FormHelperText>{!!touched.fc_type_id && errors.fc_type_id}</FormHelperText>
+      </FormControl>
 
       <CustomTextField
         label="Mô tả"
@@ -203,4 +257,4 @@ function AddFlashcardTypeModal({
   );
 }
 
-export default AddFlashcardTypeModal;
+export default AddFlashcardSetModal;

@@ -1,10 +1,10 @@
 import { getFlashcardTypeService } from 'api/flashcard/flashcard';
-import { IFlashcard } from 'api/flashcard/flashcardInterface';
+import { IFlashcardType } from 'api/flashcard/flashcardInterface';
 import { useState, useEffect, useCallback } from 'react';
 const useFetchFlashcardType = () => {
-  const [types, setTypes] = useState<IFlashcard[]>([]);
+  const [types, setTypes] = useState<IFlashcardType[]>([]);
 
-  function addType(type: IFlashcard) {
+  function addType(type: IFlashcardType) {
     setTypes([...types, type]);
   }
 
@@ -16,7 +16,7 @@ const useFetchFlashcardType = () => {
     try {
       const response = await getFlashcardTypeService();
       setTypes(
-        response.data.data.map((item: IFlashcard) => ({
+        response.data.data.map((item: IFlashcardType) => ({
           ...item,
           id: item.fc_type_id,
         }))

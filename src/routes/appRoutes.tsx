@@ -16,6 +16,8 @@ import ExamCreatePage from '../pages/exam/ExamCreatePage';
 import CourseCreatePage from '../pages/course/CourseCreatePage';
 import { Outlet } from 'react-router-dom';
 import { FlashcardType } from 'pages/flashcard';
+import FlashcardSetList from 'pages/flashcard/FlashcardSetList';
+import FlashcardSetDetail from 'pages/flashcard/FlashcardSetDetail';
 
 const appRoutes: RouteType[] = [
   {
@@ -143,11 +145,16 @@ const appRoutes: RouteType[] = [
       },
       {
         path: '/flashcard/set',
-        element: <CourseCreatePage />,
+        element: <FlashcardSetList />,
         state: 'flashcard.set',
         sidebarProps: {
           displayText: 'Bộ flashcard',
         },
+      },
+      {
+        path: '/flashcard/set/:flashcardSetId',
+        element: <FlashcardSetDetail />,
+        state: 'flashcard.setDetail',
       },
     ],
   },
