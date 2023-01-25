@@ -1,6 +1,7 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { Box, FormHelperText, Typography } from '@mui/material';
+import uploadPlugin from 'api/image/plugin';
 
 const TextForm = ({ touched, values, errors, setFieldValue }) => {
   return (
@@ -16,6 +17,7 @@ const TextForm = ({ touched, values, errors, setFieldValue }) => {
         Nội dung
       </Typography>
       <CKEditor
+        config={{ extraPlugins: [uploadPlugin] }}
         editor={ClassicEditor}
         data={values.text}
         onChange={(_, editor) => {
