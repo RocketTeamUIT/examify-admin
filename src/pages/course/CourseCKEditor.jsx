@@ -1,6 +1,7 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { Box, FormHelperText, Typography } from '@mui/material';
+import uploadPlugin from 'api/image/plugin';
 
 const CourseCKEditor = ({ touched, values, errors, setFieldValue }) => {
   return (
@@ -17,6 +18,7 @@ const CourseCKEditor = ({ touched, values, errors, setFieldValue }) => {
           Kết quả đạt được
         </Typography>
         <CKEditor
+          config={{ extraPlugins: [uploadPlugin] }}
           editor={ClassicEditor}
           data={values.achieves}
           onChange={(_, editor) => {
@@ -45,6 +47,7 @@ const CourseCKEditor = ({ touched, values, errors, setFieldValue }) => {
           Mô tả
         </Typography>
         <CKEditor
+          config={{ extraPlugins: [uploadPlugin] }}
           editor={ClassicEditor}
           data={values.description}
           onChange={(_, editor) => {
