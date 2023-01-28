@@ -167,7 +167,7 @@ function AddFlashcardSetModal({
     >
       {!hideTitle && (
         <Typography variant="h5" fontWeight="bold" mb="20px" textAlign="center">
-          Thêm loại flashcard mới
+          Thêm bộ flashcard mới
         </Typography>
       )}
       <CustomTextField

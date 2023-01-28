@@ -18,6 +18,7 @@ import { Outlet } from 'react-router-dom';
 import { FlashcardType } from 'pages/flashcard';
 import FlashcardSetList from 'pages/flashcard/FlashcardSetList';
 import FlashcardSetDetail from 'pages/flashcard/FlashcardSetDetail';
+import ExamSeriesPage from 'pages/exam/ExamSeriesPage';
 
 const appRoutes: RouteType[] = [
   {
@@ -108,6 +109,14 @@ const appRoutes: RouteType[] = [
         state: 'exam.index',
       },
       {
+        path: '/exam/series',
+        element: <ExamSeriesPage />,
+        state: 'exam.series',
+        sidebarProps: {
+          displayText: 'Danh sách bộ đề',
+        },
+      },
+      {
         path: '/exam/list',
         element: <ExamListPage />,
         state: 'exam.list',
@@ -120,7 +129,7 @@ const appRoutes: RouteType[] = [
         element: <ExamCreatePage />,
         state: 'exam.create',
         sidebarProps: {
-          displayText: 'Tạo',
+          displayText: 'Tạo đề',
         },
       },
     ],
