@@ -65,6 +65,17 @@ export interface IChoice {
   updatedAt?: string;
 }
 
+export interface IExamSeries {
+  id?: number;
+  name: string;
+  totalExam?: number;
+  publicDate?: number;
+  author?: string;
+  createdBy?: number;
+  createdAt?: number;
+  updatedAt?: number;
+}
+
 export const initialExam = {
   id: -1,
   examSeriesId: -1,
@@ -100,4 +111,9 @@ export const initialQuestion: IQuestion = {
 export const initialChoice: IChoice = {
   name: '',
   key: false,
+};
+
+export const initialExamSeries: IExamSeries = {
+  name: '',
+  author: '',
 };

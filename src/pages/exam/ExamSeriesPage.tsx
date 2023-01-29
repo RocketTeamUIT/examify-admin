@@ -6,9 +6,8 @@ import PrimaryButton from '../../components/common/PrimaryButton';
 import EditIcon from '@mui/icons-material/Edit';
 import { default as sx } from 'utils/tableProps';
 import { useState } from 'react';
-import { IUpdateFlashcardType } from 'api/flashcard/flashcardInterface';
-
-type Props = {};
+import { IExamSeries, initialExamSeries } from 'api/exam/examInterface';
+import FormExamSeries from './FormExamSeries';
 
 const columns: GridColDef[] = [
   {
@@ -20,34 +19,39 @@ const columns: GridColDef[] = [
   },
   { field: 'id', headerName: 'ID', width: 90 },
   {
-    field: 'type',
-    headerName: 'Loại',
+    field: 'name',
+    headerName: 'Tên',
     flex: 1,
     minWidth: 300,
-    renderCell: (params) => <Typography fontWeight="bold">{params.row.type}</Typography>,
+    renderCell: (params) => <Typography fontWeight="bold">{params.value}</Typography>,
   },
   {
-    field: 'description',
-    headerName: 'Mô tả',
+    field: 'totalExam',
+    headerName: 'Số đề thi',
     flex: 1,
-    minWidth: 400,
+    minWidth: 100,
   },
   {
-    field: 'sets_count',
-    headerName: 'Số bộ',
-    minWidth: 100,
+    field: 'publicDate',
+    headerName: 'Ngày công khai',
+    minWidth: 150,
+  },
+  {
+    field: 'author',
+    headerName: 'Tác giả',
+    minWidth: 150,
   },
   {
     field: 'createdAt',
     headerName: 'Ngày tạo',
     minWidth: 200,
-    renderCell: (params) => params.value.slice(0, 19).split('T').join(' '),
+    renderCell: (params) => params.value?.slice(0, 19).split('T').join(' '),
   },
   {
     field: 'updatedAt',
     headerName: 'Ngày cập nhật',
     minWidth: 200,
-    renderCell: (params) => params.value.slice(0, 19).split('T').join(' '),
+    renderCell: (params) => params.value?.slice(0, 19).split('T').join(' '),
   },
 ];
 
@@ -64,24 +68,23 @@ const style: SxProps = {
   p: 4,
 };
 
-const initialValues = { type: '', description: '', id: -1 };
-
-const ExamSeriesPage = (props: Props) => {
+const ExamSeriesPage = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
-  const [selected, setSelected] = useState<IUpdateFlashcardType>(initialValues);
+  const [selected, setSelected] = useState<IExamSeries>(initialExamSeries);
   // const { types: rows, addType, fetchData, deleteType } = useFetchFlashcardType();
 
+  const rows = [
+    { ...initialExamSeries, id: 1, name: 'abc', author: 'tf' },
+    { ...initialExamSeries, id: 2, name: 'def', author: 'xz' },
+  ];
+
+  function handleDelete() {}
+
+  function fetchData() {}
+
   columns[0].renderCell = (params) => (
-    <IconButton
-      onClick={() =>
-        toggleEdit({
-          id: params.row.id,
-          type: params.row.type,
-          description: params.row.description,
-        })
-      }
-    >
+    <IconButton onClick={() => toggleEdit(params.row.id)}>
       <EditIcon />
     </IconButton>
   );
@@ -90,12 +93,12 @@ const ExamSeriesPage = (props: Props) => {
     setOpen((prev) => !prev);
   }
 
-  function toggleEdit(data: IUpdateFlashcardType) {
+  function toggleEdit(id: number) {
     setOpenEdit((prev) => !prev);
-    if (!data) {
-      setSelected(initialValues);
+    if (!id) {
+      setSelected(initialExamSeries);
     } else {
-      setSelected(data);
+      setSelected(rows.find((row) => row.id === id) ?? initialExamSeries);
     }
   }
 
@@ -110,10 +113,9 @@ const ExamSeriesPage = (props: Props) => {
         ]}
       />
 
-      {/* <Box flex="1" mt="12px">
+      <Box flex="1" mt="12px">
         <DataGrid
           rowsPerPageOptions={[5, 10, 20, 50]}
-          rowHeight={80}
           initialState={{
             sorting: {
               sortModel: [{ field: 'id', sort: 'asc' }],
@@ -128,21 +130,21 @@ const ExamSeriesPage = (props: Props) => {
           experimentalFeatures={{ newEditingApi: true }}
           sx={sx}
         />
-      </Box> */}
+      </Box>
 
       <Modal open={open} onClose={toggle}>
         <Box sx={style}>
-          {/* <AddFlashcardTypeModal hide={toggle} onCreate={addType} isCreate /> */}
+          <FormExamSeries hide={toggle} isCreate />
         </Box>
       </Modal>
       <Modal open={openEdit} onClose={toggleEdit}>
         <Box sx={style}>
-          {/* <AddFlashcardTypeModal
+          <FormExamSeries
             hide={toggleEdit}
-            onDelete={deleteType}
+            onDelete={handleDelete}
             onUpdate={fetchData}
-            initialData={selected} 
-          />*/}
+            initialData={selected}
+          />
         </Box>
       </Modal>
     </Box>

@@ -10,8 +10,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useCallback } from 'react';
 import useFetchCourses from './hooks/useFetchCourses';
 
-type Props = {};
-
 const columns: GridColDef[] = [
   {
     field: 'action',
@@ -223,7 +221,7 @@ const sx: SxProps = {
   },
 };
 
-const CourseListPage = (props: Props) => {
+const CourseListPage = () => {
   const { courses: rows } = useFetchCourses();
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
