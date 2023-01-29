@@ -151,3 +151,7 @@ export function createBulkFlashcardService({
 export function getWordAudioService(word: string) {
   return dictionary.get('/' + word);
 }
+
+export function getFlashcardStatisticsService() {
+  return axiosBase.get('/flashcard-sets/statistics');
+}

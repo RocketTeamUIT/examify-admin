@@ -1,11 +1,9 @@
 import { Box, Grid } from '@mui/material';
-import { createNewCourseService } from 'api/course/course';
-import { INewCourse } from 'api/course/courseInterface';
 import Topbar from 'components/common/Topbar';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { RootState } from 'redux/store';
+import useFetchFlashcardStatistics from '../hooks/useFetchFlashcardStatistics';
 import CompletingCard from './CompletingCard';
 import JoiningCard from './JoiningCard';
 import LineChart from './LineChart';
@@ -22,29 +20,28 @@ import StarCard from './StarCard';
 const gridSpacing = 3;
 
 const FlashcardStatistic = () => {
-  const { user } = useSelector((store: RootState) => store.auth);
-  const navigate = useNavigate();
+  const { data } = useFetchFlashcardStatistics();
 
   return (
     <Box pb="20px">
-      <Topbar title="Thống kê khoá học" />
+      <Topbar title="Thống kê flashcard" />
       <div style={{ marginTop: '20px' }}></div>
       <Grid container spacing={gridSpacing}>
         <Grid item xs={12}>
           <Grid container spacing={gridSpacing}>
             <Grid item lg={4} md={6} sm={6} xs={12}>
-              <JoiningCard />
+              <JoiningCard value={data?.total_views || 0} />
             </Grid>
             <Grid item lg={4} md={6} sm={6} xs={12}>
-              <CompletingCard />
+              <CompletingCard value={data?.flashcards_count || 0} />
             </Grid>
             <Grid item lg={4} md={12} sm={12} xs={12}>
               <Grid container spacing={gridSpacing}>
                 <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <StarCard />
+                  <StarCard value={data?.learnt_words || 0} />
                 </Grid>
                 <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <RatingCard />
+                  <RatingCard value={data?.learnt_count || 0} />
                 </Grid>
               </Grid>
             </Grid>
@@ -56,7 +53,7 @@ const FlashcardStatistic = () => {
               <LineChart />
             </Grid>
             <Grid item xs={12} md={4}>
-              <PopularCard />
+              <PopularCard data={data?.popular || []} />
             </Grid>
           </Grid>
         </Grid>
