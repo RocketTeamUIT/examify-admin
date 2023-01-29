@@ -13,6 +13,7 @@ interface CustomTextFieldProps {
   helperText?: string | boolean;
   label?: string;
   sx?: SxProps;
+  isRequired?: boolean;
 }
 
 const CustomTextField = ({

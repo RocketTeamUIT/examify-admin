@@ -1,49 +1,49 @@
 import { Box, Tab, Tabs } from '@mui/material';
-import { IUpdateFlashcardSet } from 'api/flashcard/flashcardInterface';
+import { initialExam, IUpdateExam } from 'api/exam/examInterface';
 import Topbar from 'components/common/Topbar';
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { getExamDetail } from 'redux/features/exam/examSlice';
+import { AppDispatch, RootState } from 'redux/store';
 import { colors } from 'theme';
-import AddFlashcardSetModal from './AddFlashcardSetModal';
-import FlashcardList from './FlashcardList';
-import useFetchFlashcardSetDetail from './hooks/useFetchFlashcardSetDetail';
+import FormExam from './FormExam';
+import PartList from './PartList';
 
-function FlashcardSetDetail() {
+function ExamDetail() {
   const [currentTab, setCurrentTab] = useState<number>(1);
-  const { flashcardSetId } = useParams();
-  const { detail, fetchData } = useFetchFlashcardSetDetail(Number(flashcardSetId));
+  const { examId } = useParams();
+  const { detail } = useSelector((store: RootState) => store.exam);
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+
+  function fetchData() {
+    if (examId) {
+      dispatch(getExamDetail(Number(examId)));
+    }
+  }
 
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setCurrentTab(newValue);
   };
 
   function handleDelete() {
-    navigate('/flashcard/set');
+    navigate('/exam/list');
   }
 
-  const updateData: IUpdateFlashcardSet = detail
-    ? {
-        id: detail.fc_set_id,
-        name: detail.name,
-        description: detail.description,
-        fc_type_id: detail.fc_type_id || 0,
-      }
-    : {
-        id: 0,
-        name: '',
-        description: '',
-        fc_type_id: 0,
-      };
+  const updateData: IUpdateExam = {
+    ...initialExam,
+    ...detail,
+  };
 
   return (
     <Box pb="20px">
       <Topbar
-        title="Chi tiết bộ Flashcard"
+        title="Chi tiết đề thi"
         breadcrumbs={[
           {
-            name: 'Bộ Flashcard',
-            path: '/flashcard/set',
+            name: 'Đề thi',
+            path: '/exam/list',
           },
           {
             name: detail?.name || '',
@@ -60,7 +60,7 @@ function FlashcardSetDetail() {
         centered
       >
         <Tab value={1} label="Thông tin" />
-        <Tab value={2} label="Danh sách flashcard" />
+        <Tab value={2} label="Danh sách part" />
       </Tabs>
 
       {currentTab === 1 ? (
@@ -72,21 +72,21 @@ function FlashcardSetDetail() {
             transform: 'translateX(-50%)',
           }}
         >
-          <AddFlashcardSetModal
+          <FormExam
             hide={() => {}}
+            onUpdate={fetchData}
             hideTitle
             onDelete={handleDelete}
-            onUpdate={fetchData}
             initialData={updateData}
           />
         </Box>
       ) : (
         <Box sx={{ mt: '24px' }}>
-          <FlashcardList />
+          <PartList />
         </Box>
       )}
     </Box>
   );
 }
 
-export default FlashcardSetDetail;
+export default ExamDetail;

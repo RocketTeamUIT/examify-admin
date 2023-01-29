@@ -13,6 +13,10 @@ import DetailLayout from 'components/layout/DetailLayout';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FlashcardSetDetail from 'pages/flashcard/FlashcardSetDetail';
+import ExamDetail from 'pages/exam/ExamDetail';
+import ExamLayout from 'components/layout/ExamLayout';
+import PartDetail from 'pages/exam/PartDetail';
+import SetDetail from 'pages/exam/SetDetail';
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -35,6 +39,8 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout />}>
             {routes}
+
+            {/* Course  */}
             <Route element={<DetailLayout />}>
               <Route path="/course/:courseId" element={<CourseDetail />} />
               <Route path="/course/:courseId/chapter/:chapterId" element={<ChapterDetail />} />
@@ -52,8 +58,16 @@ function App() {
               />
             </Route>
 
+            {/* Flashcard */}
             <Route path="/flashcard/set">
               <Route path="/flashcard/set/:flashcardSetId" element={<FlashcardSetDetail />} />
+            </Route>
+
+            {/* Exam */}
+            <Route path="/exam/list" element={<ExamLayout />}>
+              <Route path="/exam/list/:examId" element={<ExamDetail />} />
+              <Route path="/exam/list/:examId/part/:partId" element={<PartDetail />} />
+              <Route path="/exam/list/:examId/part/:partId/set/:setId" element={<SetDetail />} />
             </Route>
           </Route>
           <Route element={<AuthLayout />}>{authenticationRoutes}</Route>
