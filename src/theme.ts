@@ -60,6 +60,17 @@ export const colors = {
     800: '#621b16',
     900: '#310d0b',
   },
+  blue: {
+    100: '#d2e7fa',
+    200: '#a5cff5',
+    300: '#78b8ef',
+    400: '#4ba0ea',
+    500: '#1e88e5',
+    600: '#186db7',
+    700: '#125289',
+    800: '#0c365c',
+    900: '#061b2e',
+  },
   components: {
     MuiButton: {
       variants: [],

@@ -198,8 +198,8 @@ function AddFlashcardForm({
   }
 
   async function handleConfirmDelete() {
-    setLoading(true);
     try {
+      setLoading(true);
       if (initialData) {
         await deleteFlashcardService({ axios, fc_id: initialData.id });
         if (onDelete) onDelete(initialData.id);

@@ -19,6 +19,11 @@ import { FlashcardType } from 'pages/flashcard';
 import FlashcardSetList from 'pages/flashcard/FlashcardSetList';
 import FlashcardSetDetail from 'pages/flashcard/FlashcardSetDetail';
 import ExamSeriesPage from 'pages/exam/ExamSeriesPage';
+import CourseStatistic from 'pages/course/statistics/CourseStatistic';
+import ExamStatistic from 'pages/exam/statistics/ExamStatistic';
+import FlashcardStatistic from 'pages/flashcard/statistics/FlashcardStatistic';
+import UserList from 'pages/user/UserList';
+import UserStatistic from 'pages/user/statistics/UserStatistic';
 
 const appRoutes: RouteType[] = [
   {
@@ -27,41 +32,29 @@ const appRoutes: RouteType[] = [
     state: 'home',
   },
   {
-    path: '/dashboard',
+    path: '/user',
     element: <DashboardPageLayout />,
-    state: 'dashboard',
+    state: 'user',
     sidebarProps: {
-      displayText: 'Dashboard',
+      displayText: 'User',
       icon: <BiHomeAlt size={24} />,
     },
     child: [
       {
         index: true,
-        element: <DashboardIndex />,
-        state: 'dashboard.index',
-      },
-      {
-        path: '/dashboard/default',
-        element: <DefaultPage />,
-        state: 'dashboard.default',
+        element: <UserList />,
+        state: 'user.index',
+        path: '/user',
         sidebarProps: {
-          displayText: 'Default',
+          displayText: 'Danh sách User',
         },
       },
       {
-        path: '/dashboard/analytics',
-        element: <AnalyticsPage />,
-        state: 'dashboard.analytics',
+        path: '/user/statistic',
+        element: <UserStatistic />,
+        state: 'user.statistic',
         sidebarProps: {
-          displayText: 'AnalyticsPage',
-        },
-      },
-      {
-        path: '/dashboard/sass',
-        element: <SassPage />,
-        state: 'dashboard.sass',
-        sidebarProps: {
-          displayText: 'SassPage',
+          displayText: 'Thống kê',
         },
       },
     ],
@@ -90,6 +83,14 @@ const appRoutes: RouteType[] = [
         state: 'course.create',
         sidebarProps: {
           displayText: 'Tạo khoá học',
+        },
+      },
+      {
+        path: '/course/statistic',
+        element: <CourseStatistic />,
+        state: 'course.statistic',
+        sidebarProps: {
+          displayText: 'Thống kê',
         },
       },
     ],
@@ -132,6 +133,14 @@ const appRoutes: RouteType[] = [
           displayText: 'Tạo đề',
         },
       },
+      {
+        path: '/exam/statistic',
+        element: <ExamStatistic />,
+        state: 'exam.statistic',
+        sidebarProps: {
+          displayText: 'Thống kê',
+        },
+      },
     ],
   },
   {
@@ -164,6 +173,14 @@ const appRoutes: RouteType[] = [
         path: '/flashcard/set/:flashcardSetId',
         element: <FlashcardSetDetail />,
         state: 'flashcard.setDetail',
+      },
+      {
+        path: '/flashcard/statistic',
+        element: <FlashcardStatistic />,
+        state: 'flashcard.statistic',
+        sidebarProps: {
+          displayText: 'Thống kê',
+        },
       },
     ],
   },
