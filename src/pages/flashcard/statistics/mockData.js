@@ -485,60 +485,6 @@ export const mockLineData = [
       },
     ],
   },
-  {
-    id: 'Lượt hoàn thành',
-    color: colors.primary[300],
-    data: [
-      {
-        x: 'plane',
-        y: 212,
-      },
-      {
-        x: 'helicopter',
-        y: 190,
-      },
-      {
-        x: 'boat',
-        y: 270,
-      },
-      {
-        x: 'train',
-        y: 9,
-      },
-      {
-        x: 'subway',
-        y: 75,
-      },
-      {
-        x: 'bus',
-        y: 175,
-      },
-      {
-        x: 'car',
-        y: 33,
-      },
-      {
-        x: 'moto',
-        y: 189,
-      },
-      {
-        x: 'bicycle',
-        y: 97,
-      },
-      {
-        x: 'horse',
-        y: 87,
-      },
-      {
-        x: 'skateboard',
-        y: 299,
-      },
-      {
-        x: 'others',
-        y: 251,
-      },
-    ],
-  },
 ];
 
 export const mockGeographyData = [

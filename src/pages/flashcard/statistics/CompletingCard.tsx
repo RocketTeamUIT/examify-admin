@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 import { Avatar, Box, Card, Grid, Typography } from '@mui/material';
 
 // assets
-import AddTaskIcon from '@mui/icons-material/AddTask';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
 import { colors } from 'theme';
 
 const CardWrapper = styled(Card)(({ theme }) => ({
@@ -59,7 +59,7 @@ const CompletingCard = ({ value }: { value: number }) => {
                       mt: 1,
                     }}
                   >
-                    <AddTaskIcon />
+                    <CreditCardIcon />
                   </Avatar>
                 </Grid>
               </Grid>

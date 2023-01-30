@@ -155,3 +155,11 @@ export function getWordAudioService(word: string) {
 export function getFlashcardStatisticsService() {
   return axiosBase.get('/flashcard-sets/statistics');
 }
+
+export function getSetStatisticsService(id: number, year: number) {
+  return axiosBase.get('/flashcard-sets/statistics/' + id, {
+    params: {
+      year,
+    },
+  });
+}

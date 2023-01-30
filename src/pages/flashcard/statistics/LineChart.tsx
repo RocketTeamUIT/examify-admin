@@ -1,22 +1,47 @@
-import { Box, Typography, TextField, MenuItem } from '@mui/material';
+import { Box, Typography, MenuItem } from '@mui/material';
 import { ResponsiveLine } from '@nivo/line';
 import { colors } from 'theme';
 import { useState } from 'react';
-import { mockLineData as data } from './mockData';
+import useFetchFlashcardSets from '../hooks/useFetchFlashcardSets';
+import Select from '@mui/material/Select';
 
-const status = [
-  {
-    value: 'month',
-    label: 'Tháng',
-  },
-  {
-    value: 'year',
-    label: 'Năm',
-  },
-];
+import useFetchSetStatistics from '../hooks/useFetchSetStatistics';
 
 const LineChart = ({ isDashboard = false }) => {
-  const [value, setValue] = useState<string>('');
+  const [value, setValue] = useState({
+    set: -1,
+    year: 2023,
+  });
+  const { data } = useFetchSetStatistics(value.set, value.year);
+  const { sets } = useFetchFlashcardSets();
+
+  function formatRows(rows: any) {
+    return (rows.months || []).map((r: any) => ({
+      x: r.month,
+      y: r.learnt_count,
+    }));
+  }
+
+  const lineData = [
+    {
+      id: 'Lượt học từ',
+      color: colors.greenAccent[500],
+      data: formatRows(data),
+    },
+  ];
+
+  function handleChange(e: any) {
+    setValue({
+      ...value,
+      [e.target.name]: e.target.value,
+    });
+  }
+
+  function getRatio(v1: any, v2: any) {
+    const a = Number(v1 || 0),
+      b = Number(v2 || 1);
+    return Math.round((a / b) * 100);
+  }
 
   return (
     <Box
@@ -35,42 +60,74 @@ const LineChart = ({ isDashboard = false }) => {
       >
         <Box>
           <Typography sx={{ fontSize: '12px', color: '#666', fontWeight: 500 }}>
-            Số người tham gia
+            Số flashcard
           </Typography>
-          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>500</Typography>
+          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>
+            {data?.count}
+          </Typography>
         </Box>
 
         <Box>
           <Typography sx={{ fontSize: '12px', color: '#666', fontWeight: 500 }}>
-            Số người hoàn thành
+            Lượt xem
           </Typography>
-          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>500</Typography>
+          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>
+            {data?.views}
+          </Typography>
         </Box>
 
         <Box>
           <Typography sx={{ fontSize: '12px', color: '#666', fontWeight: 500 }}>
-            Đánh giá
+            Tổng lượt học từ
           </Typography>
-          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>4.5</Typography>
+          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>
+            {data.learnt_count}
+          </Typography>
         </Box>
 
-        <Box ml="auto">
-          <TextField
-            id="standard-select-currency"
-            select
+        <Box>
+          <Typography sx={{ fontSize: '12px', color: '#666', fontWeight: 500 }}>
+            Tỉ lệ hoàn thành
+          </Typography>
+          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>
+            {getRatio(data.users_learnt_count, data.users_count)}% ({data.users_learnt_count || 0})
+          </Typography>
+        </Box>
+
+        <Box ml="auto" sx={{ display: 'flex', gap: '16px' }}>
+          <Select
+            id="standard-select-year"
             size="small"
-            value={value}
+            value={value.year}
             sx={{
               fontSize: '14px',
             }}
-            onChange={(e) => setValue(e.target.value)}
+            name="year"
+            onChange={handleChange}
           >
-            {status.map((option) => (
-              <MenuItem sx={{ fontSize: '14px' }} key={option.value} value={option.value}>
-                {option.label}
+            <MenuItem value={2022}>2022</MenuItem>
+            <MenuItem value={2023}>2023</MenuItem>
+          </Select>
+          <Select
+            id="standard-select-currency"
+            size="small"
+            value={value.set}
+            sx={{
+              fontSize: '14px',
+              width: '200px',
+            }}
+            name="set"
+            onChange={handleChange}
+          >
+            <MenuItem value={-1} disabled>
+              Chọn bộ flashcard
+            </MenuItem>
+            {sets.map((set) => (
+              <MenuItem sx={{ fontSize: '14px' }} key={set.fc_set_id} value={set.fc_set_id}>
+                {set.name}
               </MenuItem>
             ))}
-          </TextField>
+          </Select>
         </Box>
       </Box>
 
@@ -80,7 +137,7 @@ const LineChart = ({ isDashboard = false }) => {
         }}
       >
         <ResponsiveLine
-          data={data}
+          data={lineData}
           theme={{
             axis: {
               domain: {
@@ -122,7 +179,7 @@ const LineChart = ({ isDashboard = false }) => {
                 }
               : { scheme: 'nivo' }
           }
-          margin={{ top: 40, right: 140, bottom: 40, left: 50 }}
+          margin={{ top: 40, right: 140, bottom: 50, left: 50 }}
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',
@@ -139,7 +196,7 @@ const LineChart = ({ isDashboard = false }) => {
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: isDashboard ? undefined : 'transportation',
+            legend: isDashboard ? undefined : 'Tháng',
             legendOffset: 36,
             legendPosition: 'middle',
           }}
@@ -148,7 +205,7 @@ const LineChart = ({ isDashboard = false }) => {
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: isDashboard ? undefined : 'count',
+            legend: isDashboard ? undefined : 'Đếm',
             legendOffset: -40,
             legendPosition: 'middle',
           }}

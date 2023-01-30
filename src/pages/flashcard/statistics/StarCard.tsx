@@ -12,7 +12,8 @@ import {
 } from '@mui/material';
 
 // assets
-import StarIcon from '@mui/icons-material/Star';
+import SchoolIcon from '@mui/icons-material/School';
+// import StarIcon from '@mui/icons-material/Star';
 import { colors } from 'theme';
 
 // styles
@@ -58,7 +59,7 @@ const StarCard = ({ value }: { value: number }) => {
                   color: '#fff',
                 }}
               >
-                <StarIcon fontSize="inherit" />
+                <SchoolIcon fontSize="inherit" />
               </Avatar>
             </ListItemAvatar>
             <ListItemText

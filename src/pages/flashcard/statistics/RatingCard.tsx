@@ -12,7 +12,8 @@ import {
 } from '@mui/material';
 
 // assets
-import MoodIcon from '@mui/icons-material/Mood';
+import AddTaskIcon from '@mui/icons-material/AddTask';
+// import MoodIcon from '@mui/icons-material/Mood';
 import { colors } from 'theme';
 
 // styles
@@ -58,7 +59,7 @@ const RatingCard = ({ value }: { value: number }) => {
                   color: '#fff',
                 }}
               >
-                <MoodIcon fontSize="inherit" />
+                <AddTaskIcon fontSize="inherit" />
               </Avatar>
             </ListItemAvatar>
             <ListItemText
