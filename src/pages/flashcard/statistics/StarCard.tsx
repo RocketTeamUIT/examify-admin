@@ -12,7 +12,8 @@ import {
 } from '@mui/material';
 
 // assets
-import StarIcon from '@mui/icons-material/Star';
+import SchoolIcon from '@mui/icons-material/School';
+// import StarIcon from '@mui/icons-material/Star';
 import { colors } from 'theme';
 
 // styles
@@ -44,7 +45,7 @@ const CardWrapper = styled(Card)(({ theme }) => ({
   },
 }));
 
-const StarCard = () => {
+const StarCard = ({ value }: { value: number }) => {
   return (
     <CardWrapper>
       <Box sx={{ p: 2 }}>
@@ -58,7 +59,7 @@ const StarCard = () => {
                   color: '#fff',
                 }}
               >
-                <StarIcon fontSize="inherit" />
+                <SchoolIcon fontSize="inherit" />
               </Avatar>
             </ListItemAvatar>
             <ListItemText
@@ -69,12 +70,12 @@ const StarCard = () => {
               }}
               primary={
                 <Typography sx={{ color: '#333', fontSize: '16px', fontWeight: 700 }}>
-                  4.2
+                  {value}
                 </Typography>
               }
               secondary={
                 <Typography variant="subtitle2" color={colors.grey[700]}>
-                  Trung bình tất cả các khoá học
+                  Tổng số từ mọi người dùng đã học
                 </Typography>
               }
             />

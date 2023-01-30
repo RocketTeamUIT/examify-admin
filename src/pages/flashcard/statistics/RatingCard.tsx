@@ -12,7 +12,8 @@ import {
 } from '@mui/material';
 
 // assets
-import MoodIcon from '@mui/icons-material/Mood';
+import AddTaskIcon from '@mui/icons-material/AddTask';
+// import MoodIcon from '@mui/icons-material/Mood';
 import { colors } from 'theme';
 
 // styles
@@ -44,7 +45,7 @@ const CardWrapper = styled(Card)(({ theme }) => ({
   },
 }));
 
-const RatingCard = () => {
+const RatingCard = ({ value }: { value: number }) => {
   return (
     <CardWrapper>
       <Box sx={{ p: 2 }}>
@@ -58,7 +59,7 @@ const RatingCard = () => {
                   color: '#fff',
                 }}
               >
-                <MoodIcon fontSize="inherit" />
+                <AddTaskIcon fontSize="inherit" />
               </Avatar>
             </ListItemAvatar>
             <ListItemText
@@ -69,12 +70,12 @@ const RatingCard = () => {
               }}
               primary={
                 <Typography sx={{ color: '#fff', fontSize: '16px', fontWeight: 700 }}>
-                  3000
+                  {value}
                 </Typography>
               }
               secondary={
                 <Typography variant="subtitle2" color="#fff">
-                  Số người đánh giá
+                  Tổng số lượt hoàn thành bộ flashcard
                 </Typography>
               }
             />
