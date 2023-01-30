@@ -45,7 +45,7 @@ const CardWrapper = styled(Card)(({ theme }) => ({
   },
 }));
 
-const JoiningCard = () => {
+const JoiningCard = ({ value }: { value: number }) => {
   return (
     <>
       <CardWrapper sx={{ height: '100%' }}>
@@ -72,7 +72,7 @@ const JoiningCard = () => {
                   <Typography
                     sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}
                   >
-                    500
+                    {value}
                   </Typography>
                 </Grid>
               </Grid>

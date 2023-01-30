@@ -31,7 +31,7 @@ import VideoForm from './VideoForm';
 const validationSchema = yup.object().shape({
   name: yup.string().required('Mục này không được để trống'),
   description: yup.string().required('Mục này không được để trống'),
-  type: yup.number().required('Mục này không được để trống'),
+  type: yup.number().not([0], 'Mục này không được để trống'),
   videoUrl: yup.string().when('type', {
     is: 1,
     then: yup.string().required('Mục này không được để trống'),
@@ -40,16 +40,10 @@ const validationSchema = yup.object().shape({
     is: 2,
     then: yup.string().required('Mục này không được để trống'),
   }),
-  flashcardSetId: yup
-    .number()
-    .when('type', {
-      is: 3,
-      then: yup
-        .number()
-        .required('Mục này không được để trống')
-        .test('positive', 'Cần nhập vào số lớn hơn 0', (value: any) => ~~value > 0),
-    })
-    .typeError('Bạn phải nhập một số'),
+  flashcardSetId: yup.number().when('type', {
+    is: 3,
+    then: yup.number().not([0], 'Cần chọn một bộ flashcard'),
+  }),
 });
 
 const LessonForm = ({ lesson, isCreate }: any) => {
@@ -179,6 +173,8 @@ const LessonForm = ({ lesson, isCreate }: any) => {
     errors,
     setFieldValue,
     resetForm,
+    setErrors,
+    setTouched,
   } = useFormik({
     initialValues,
     onSubmit: handleFormSubmit,
@@ -305,7 +301,10 @@ const LessonForm = ({ lesson, isCreate }: any) => {
       {type === 3 && (
         <FlashcardForm
           touched={touched}
+          setErrors={setErrors}
+          setTouched={setTouched}
           values={values}
+          setFieldValue={setFieldValue}
           handleBlur={handleBlur}
           handleChange={handleChange}
           errors={errors}

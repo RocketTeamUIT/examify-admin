@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import useAxiosPrivate from 'hooks/useAxiosPrivate';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { getUserInfo } from 'redux/features/auth/authSlice';
 import colorConfigs from '../../configs/colorConfigs';
 import { toggleBar } from '../../redux/features/appStateSlice';
@@ -11,9 +11,18 @@ import Sidebar from '../common/Sidebar';
 
 const MainLayout = () => {
   const { hideBar } = useSelector((store: RootState) => store.appState);
+  const { user } = useSelector((store: RootState) => store.auth);
+
   const dispatch = useDispatch<AppDispatch>();
   const axiosPrivate = useAxiosPrivate();
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user.email && location.pathname === '/') {
+      navigate('/user');
+    }
+  }, [user, navigate, location]);
 
   useEffect(() => {
     dispatch(getUserInfo(axiosPrivate));

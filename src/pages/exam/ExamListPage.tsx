@@ -77,7 +77,7 @@ const columns: GridColDef[] = [
   },
   {
     field: 'isFullExplanation',
-    headerName: 'Có lời giải',
+    headerName: 'Full lời giải',
     renderCell: (params) =>
       params.row.isFullExplanation && (
         <Box
@@ -88,6 +88,11 @@ const columns: GridColDef[] = [
           }}
         />
       ),
+  },
+  {
+    field: 'audio',
+    headerName: 'Audio',
+    minWidth: 200,
   },
   {
     field: 'createdAt',

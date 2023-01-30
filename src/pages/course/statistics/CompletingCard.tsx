@@ -43,7 +43,7 @@ const CardWrapper = styled(Card)(({ theme }) => ({
   },
 }));
 
-const CompletingCard = () => {
+const CompletingCard = ({ value }: { value: number }) => {
   return (
     <>
       <CardWrapper sx={{ height: '100%' }}>
@@ -70,7 +70,7 @@ const CompletingCard = () => {
                   <Typography
                     sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}
                   >
-                    500
+                    {value}
                   </Typography>
                 </Grid>
               </Grid>

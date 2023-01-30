@@ -10,7 +10,7 @@ import { colors } from 'theme';
 import PopularItem from './PopularItem';
 // ==============================|| DASHBOARD DEFAULT - POPULAR CARD ||============================== //
 
-const PopularCard = () => {
+const PopularCard = ({ data }: { data: any[] }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event: any) => {
@@ -77,11 +77,9 @@ const PopularCard = () => {
             </Grid>
           </Grid>
 
-          {Array(5)
-            .fill('')
-            .map((_, i) => (
-              <PopularItem key={i} hideDivider={i === 4} />
-            ))}
+          {data.map((datum, i) => (
+            <PopularItem data={datum} key={i} hideDivider={i === 4} />
+          ))}
         </Grid>
       </CardContent>
     </Box>

@@ -1,7 +1,7 @@
 import { getAllCoursesService } from 'api/course/course';
 import { useState, useEffect, useCallback } from 'react';
 const useFetchCourses = () => {
-  const [courses, setCourses] = useState([]);
+  const [courses, setCourses] = useState<any[]>([]);
 
   const getAllCourses = useCallback(async () => {
     try {
