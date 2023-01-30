@@ -120,3 +120,15 @@ export const updateLessonService = (data: IEditLesson) => {
 export const deleteLessonService = (id: string) => {
   return axiosBase.delete(`lessons/delete/${id}`);
 };
+
+export function getCourseStatisticsService() {
+  return axiosBase.get('/courses/statistics');
+}
+
+export function getCourseDetailStatisticsService(id: number, year: number) {
+  return axiosBase.get('/courses/statistics/' + id, {
+    params: {
+      year,
+    },
+  });
+}

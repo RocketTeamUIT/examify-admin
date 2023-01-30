@@ -17,6 +17,9 @@ import { toast } from 'react-toastify';
 import useAxiosPrivate from 'hooks/useAxiosPrivate';
 import { IExam, INewExam, IUpdateExam } from 'api/exam/examInterface';
 import Switch from '@mui/material/Switch';
+import useFetchExamSeries from './hooks/useFetchExamSeries';
+import { createExamService, deleteExamService, updateExamService } from 'api/exam/exam';
+import { useNavigate } from 'react-router-dom';
 
 const validationSchema = yup.object().shape({
   name: yup.string().required('Bắt buộc nhập trường này'),
@@ -31,6 +34,7 @@ const validationSchema = yup.object().shape({
       return value !== undefined && value >= 0;
     }),
   isFullExplanation: yup.boolean(),
+  audio: yup.string(),
   duration: yup
     .number()
     .required('Bắt buộc nhập trường này')
@@ -46,7 +50,7 @@ interface IExamForm {
   onCreate?: (data: IExam) => void;
   initialData?: IUpdateExam;
   onUpdate?: () => void;
-  onDelete?: (id: number) => void;
+  onDelete?: (id?: number) => void;
   hide: (data?: any) => void;
   hideTitle?: boolean;
 }
@@ -63,6 +67,8 @@ function FormExam({
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const axios = useAxiosPrivate(true);
+  const { data: examSeries } = useFetchExamSeries();
+  const navigate = useNavigate();
 
   const initialValues = initialData ?? {
     examSeriesId: 0,
@@ -97,49 +103,46 @@ function FormExam({
   }, [initialData, resetForm]);
 
   function handleFormSubmit(data: INewExam) {
-    // if (isCreate) {
-    //   createFlashcardSet(data);
-    // } else if (initialData) {
-    //   updateFlashcardSet({
-    //     ...data,
-    //     id: initialData.id,
-    //   });
-    // }
+    console.log(data);
+    if (isCreate) {
+      createExam(data);
+    } else if (initialData) {
+      updateExam({
+        ...data,
+        id: initialData.id,
+      });
+    }
   }
 
-  // async function createFlashcardSet(data: INewExam) {
-  //   try {
-  //     setLoading(true);
-  //     const response = await createFlashcardSetService({ axios, ...data });
-  //     if (onCreate)
-  //       onCreate({
-  //         ...response.data.data,
-  //         id: response.data.data.fc_set_id,
-  //       });
-  //     toast.success('Thêm bộ flashcard thành công');
-  //     hide();
-  //   } catch (error) {
-  //     console.log('🚀 ~ file: AddFlashcardSetModal.tsx:93 ~ createFlashcardType ~ error', error);
-  //     toast.error('Thêm thất bại');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+  async function createExam(data: INewExam) {
+    try {
+      setLoading(true);
+      const response = await createExamService(data);
+      navigate('/exam/list/' + response.data.data.id);
+      toast.success('Thêm đề thi thành công');
+      hide();
+    } catch (error) {
+      console.log('🚀 ~ file: FormExam.tsx:123 ~ createExam ~ error', error);
+      toast.error('Thêm thất bại');
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  // async function updateFlashcardSet(data: IUpdateFlashcardSet) {
-  //   try {
-  //     setLoading(true);
-  //     await updateFlashcardSetService({ ...data, axios });
-  //     if (onUpdate) onUpdate();
-  //     toast.success('Cập nhật bộ flashcard thành công');
-  //     hide();
-  //   } catch (error) {
-  //     toast.error('Cập nhật thất bại');
-  //     console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:38 ~ handleFormSubmit ~ error', error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+  async function updateExam(data: IUpdateExam) {
+    try {
+      setLoading(true);
+      await updateExamService(data);
+      if (onUpdate) onUpdate();
+      toast.success('Cập nhật exam thành công');
+      hide();
+    } catch (error) {
+      toast.error('Cập nhật thất bại');
+      console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:38 ~ handleFormSubmit ~ error', error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function isValuesNotChanged() {
     if (isCreate) {
@@ -151,21 +154,20 @@ function FormExam({
   }
 
   async function handleConfirmDelete() {
-    toggle();
-    // try {
-    //   setLoading(true);
-    //   if (initialData) {
-    //     await deleteFlashcardSetService({ axios, fc_set_id: initialData.id });
-    //     if (onDelete) onDelete(initialData.id);
-    //     toast.success('Xoá thành công');
-    //   }
-    // } catch (error) {
-    //   console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:107 ~ handleConfirmDelete ~ error', error);
-    //   toast.error('Xoá thất bại');
-    // } finally {
-    //   setLoading(false);
-    //   hide()
-    // }
+    try {
+      setLoading(true);
+      if (initialData) {
+        await deleteExamService(initialData.id || 0);
+        if (onDelete) onDelete();
+        toast.success('Xoá thành công');
+      }
+    } catch (error) {
+      console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:107 ~ handleConfirmDelete ~ error', error);
+      toast.error('Xoá thất bại');
+    } finally {
+      setLoading(false);
+      hide();
+    }
   }
 
   function toggle() {
@@ -244,8 +246,9 @@ function FormExam({
           <MenuItem value={0} disabled>
             Chọn
           </MenuItem>
-          <MenuItem value={1}>ETS 2022</MenuItem>
-          <MenuItem value={2}>ETS 2023</MenuItem>
+          {examSeries?.map((series) => (
+            <MenuItem value={series.id}>{series.name}</MenuItem>
+          ))}
         </Select>
         <FormHelperText>{!!touched.examSeriesId && errors.examSeriesId}</FormHelperText>
       </FormControl>
@@ -267,7 +270,7 @@ function FormExam({
       <CustomTextField
         label="Thời gian"
         sx={{ mt: '24px', width: '100%', display: 'flex' }}
-        helperText={!!touched.pointReward && errors.pointReward}
+        helperText={!!touched.duration && errors.duration}
         inputProps={{
           placeholder: 'Thời gian',
           value: values.duration,
@@ -295,6 +298,34 @@ function FormExam({
         onBlur={handleBlur}
       />
       <FormHelperText>{!!touched.isFullExplanation && errors.isFullExplanation}</FormHelperText>
+
+      <CustomTextField
+        label="Âm thanh"
+        sx={{ mt: '24px', width: '100%', display: 'flex' }}
+        helperText={!!touched.audio && errors.audio}
+        inputProps={{
+          placeholder: 'Âm thanh',
+          value: values.audio,
+          onBlur: handleBlur,
+          onChange: handleChange,
+          error: !!touched.audio && !!errors.audio,
+          name: 'audio',
+        }}
+      />
+
+      <CustomTextField
+        label="File tải"
+        sx={{ mt: '24px', width: '100%', display: 'flex' }}
+        helperText={!!touched.fileDownload && errors.fileDownload}
+        inputProps={{
+          placeholder: 'File tải',
+          value: values.fileDownload,
+          onBlur: handleBlur,
+          onChange: handleChange,
+          error: !!touched.fileDownload && !!errors.fileDownload,
+          name: 'fileDownload',
+        }}
+      />
 
       <CustomTextField
         label="Thêm hashtag"

@@ -2,7 +2,9 @@ export interface INewExam {
   examSeriesId: number;
   name: string;
   pointReward: number;
+  audio?: string;
   hashtag?: string[];
+  fileDownload?: string;
   isFullExplanation: boolean;
   duration: number;
   hashtagText: string;
