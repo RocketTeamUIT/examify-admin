@@ -1,11 +1,5 @@
 import { Box, Grid } from '@mui/material';
-import { createNewCourseService } from 'api/course/course';
-import { INewCourse } from 'api/course/courseInterface';
 import Topbar from 'components/common/Topbar';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { RootState } from 'redux/store';
 import useFetchCourseStatistics from '../hooks/useFetchCourseStatistics';
 import CompletingCard from './CompletingCard';
 import JoiningCard from './JoiningCard';
@@ -23,8 +17,6 @@ import StarCard from './StarCard';
 const gridSpacing = 3;
 
 const CourseStatistic = () => {
-  const { user } = useSelector((store: RootState) => store.auth);
-  const navigate = useNavigate();
   const { data: course } = useFetchCourseStatistics();
 
   return (
@@ -58,7 +50,7 @@ const CourseStatistic = () => {
               <LineChart />
             </Grid>
             <Grid item xs={12} md={4}>
-              <PopularCard />
+              <PopularCard data={course.popular || []} />
             </Grid>
           </Grid>
         </Grid>

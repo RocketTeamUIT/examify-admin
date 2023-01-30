@@ -3,7 +3,7 @@ import { colors } from 'theme';
 import PersonIcon from '@mui/icons-material/Person';
 import StarIcon from '@mui/icons-material/Star';
 
-function PopularItem({ hideDivider = false }: { hideDivider: boolean }) {
+function PopularItem({ hideDivider = false, data }: { hideDivider: boolean; data: any }) {
   return (
     <Grid item xs={12}>
       <Grid container direction="column">
@@ -15,7 +15,7 @@ function PopularItem({ hideDivider = false }: { hideDivider: boolean }) {
                 color="inherit"
                 sx={{ fontSize: '14px', fontWeight: 600 }}
               >
-                Bajaj Finery
+                {data.name}
               </Typography>
             </Grid>
             <Grid item>
@@ -31,7 +31,7 @@ function PopularItem({ hideDivider = false }: { hideDivider: boolean }) {
                       gap: '8px',
                     }}
                   >
-                    4.3{' '}
+                    {data.avgRating}{' '}
                     <StarIcon sx={{ fontSize: '16px', mt: '-2px', color: colors.orange[300] }} />
                   </Typography>
                 </Grid>
@@ -49,7 +49,7 @@ function PopularItem({ hideDivider = false }: { hideDivider: boolean }) {
               alignItems: 'center',
             }}
           >
-            1000 <PersonIcon sx={{ fontSize: '16px' }} />
+            {data.participants} <PersonIcon sx={{ fontSize: '16px' }} />
           </Typography>
         </Grid>
       </Grid>

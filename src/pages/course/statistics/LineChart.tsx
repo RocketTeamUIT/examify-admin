@@ -1,4 +1,4 @@
-import { Box, Typography, TextField, MenuItem } from '@mui/material';
+import { Box, Typography, MenuItem } from '@mui/material';
 import { ResponsiveLine } from '@nivo/line';
 import { colors } from 'theme';
 import { useState } from 'react';
