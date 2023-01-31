@@ -1,22 +1,42 @@
-import { Box, Typography, TextField, MenuItem } from '@mui/material';
+import { Box, Typography, MenuItem } from '@mui/material';
 import { ResponsiveLine } from '@nivo/line';
 import { colors } from 'theme';
 import { useState } from 'react';
-import { mockLineData as data } from './mockData';
-
-const status = [
-  {
-    value: 'month',
-    label: 'Tháng',
-  },
-  {
-    value: 'year',
-    label: 'Năm',
-  },
-];
+import Select from '@mui/material/Select';
+import useFetchUserDetailStatistics from '../hooks/useFetchUserDetailStatistics';
 
 const LineChart = ({ isDashboard = false }) => {
-  const [value, setValue] = useState<string>('');
+  const [value, setValue] = useState({
+    year: 2023,
+  });
+  const { data } = useFetchUserDetailStatistics(value.year);
+
+  function handleChange(e: any) {
+    setValue({
+      ...value,
+      [e.target.name]: e.target.value,
+    });
+  }
+
+  function formatRows(rows: any, field: string) {
+    return (rows.months || []).map((r: any) => ({
+      x: r.month,
+      y: r[field],
+    }));
+  }
+
+  const lineData: any[] = [
+    {
+      id: 'Đạo hữu mới',
+      color: colors.greenAccent[500],
+      data: formatRows(data, 'new_count'),
+    },
+    {
+      id: 'Số đạo hữu tu luyện',
+      color: '#2929cc',
+      data: formatRows(data, 'active_count'),
+    },
+  ];
 
   return (
     <Box
@@ -35,42 +55,45 @@ const LineChart = ({ isDashboard = false }) => {
       >
         <Box>
           <Typography sx={{ fontSize: '12px', color: '#666', fontWeight: 500 }}>
-            Số người tham gia
+            Tổng đạo hữu mới
           </Typography>
-          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>500</Typography>
+          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>
+            {data.total_new_users}
+          </Typography>
         </Box>
 
         <Box>
           <Typography sx={{ fontSize: '12px', color: '#666', fontWeight: 500 }}>
-            Số người hoàn thành
+            Tổng đạo hữu hoạt động
           </Typography>
-          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>500</Typography>
+          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>
+            {data.total_active_users}
+          </Typography>
         </Box>
 
-        <Box>
+        {/* <Box>
           <Typography sx={{ fontSize: '12px', color: '#666', fontWeight: 500 }}>
-            Đánh giá
+            Tổng điểm các đạo hữu
           </Typography>
-          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>4.5</Typography>
-        </Box>
+          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>
+            {data.total_rank_point}
+          </Typography>
+        </Box> */}
 
-        <Box ml="auto">
-          <TextField
-            id="standard-select-currency"
-            select
+        <Box ml="auto" sx={{ display: 'flex', gap: '16px' }}>
+          <Select
+            id="standard-select-year"
             size="small"
-            value={value}
+            value={value.year}
             sx={{
               fontSize: '14px',
             }}
-            onChange={(e) => setValue(e.target.value)}
+            name="year"
+            onChange={handleChange}
           >
-            {status.map((option) => (
-              <MenuItem sx={{ fontSize: '14px' }} key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
+            <MenuItem value={2022}>2022</MenuItem>
+            <MenuItem value={2023}>2023</MenuItem>
+          </Select>
         </Box>
       </Box>
 
@@ -80,7 +103,7 @@ const LineChart = ({ isDashboard = false }) => {
         }}
       >
         <ResponsiveLine
-          data={data}
+          data={lineData}
           theme={{
             axis: {
               domain: {
@@ -122,13 +145,13 @@ const LineChart = ({ isDashboard = false }) => {
                 }
               : { scheme: 'nivo' }
           }
-          margin={{ top: 40, right: 140, bottom: 40, left: 50 }}
+          margin={{ top: 40, right: 150, bottom: 50, left: 50 }}
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',
             min: 'auto',
             max: 'auto',
-            stacked: true,
+            stacked: false,
             reverse: false,
           }}
           yFormat=" >-.2f"
@@ -139,7 +162,7 @@ const LineChart = ({ isDashboard = false }) => {
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: isDashboard ? undefined : 'transportation',
+            legend: isDashboard ? undefined : 'Tháng',
             legendOffset: 36,
             legendPosition: 'middle',
           }}
@@ -148,7 +171,7 @@ const LineChart = ({ isDashboard = false }) => {
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: isDashboard ? undefined : 'count',
+            legend: isDashboard ? undefined : 'Giá trị',
             legendOffset: -40,
             legendPosition: 'middle',
           }}

@@ -1,17 +1,14 @@
 import { useFormik } from 'formik';
 import { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
-import * as yup from 'yup';
-import CustomTextField from 'components/common/CustomTextField';
 import PrimaryButton from 'components/common/PrimaryButton';
 import AlertDialog from 'pages/course/AlertDialog';
 import { toast } from 'react-toastify';
-import useAxiosPrivate from 'hooks/useAxiosPrivate';
 import { initialUser, IUser } from 'api/users/userInterface';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import FormHelperText from '@mui/material/FormHelperText';
+import { changePermissionService } from 'api/users/users';
 
 interface IUserForm {
   isCreate?: boolean;
@@ -38,7 +35,6 @@ function FormUser({
 }: IUserForm) {
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
-  const axios = useAxiosPrivate(true);
 
   const initialValues: ICustomUser = {
     ...initialUser,
@@ -60,50 +56,26 @@ function FormUser({
   }, [initialData, resetForm]);
 
   function handleFormSubmit(data: ICustomUser) {
-    console.log(data);
-    // if (isCreate) {
-    //   createFlashcardSet(data);
-    // } else if (initialData) {
-    //   updateFlashcardSet({
-    //     ...data,
-    //     id: initialData.id,
-    //   });
-    // }
+    changeRole({
+      ...data,
+      id: initialData?.id || -1,
+    });
   }
 
-  // async function createFlashcardSet(data: IPart) {
-  //   try {
-  //     setLoading(true);
-  //     const response = await createFlashcardSetService({ axios, ...data });
-  //     if (onCreate)
-  //       onCreate({
-  //         ...response.data.data,
-  //         id: response.data.data.fc_set_id,
-  //       });
-  //     toast.success('Thêm bộ flashcard thành công');
-  //     hide();
-  //   } catch (error) {
-  //     console.log('🚀 ~ file: AddFlashcardSetModal.tsx:93 ~ createFlashcardType ~ error', error);
-  //     toast.error('Thêm thất bại');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
-
-  // async function updateFlashcardSet(data: IUpdateFlashcardSet) {
-  //   try {
-  //     setLoading(true);
-  //     await updateFlashcardSetService({ ...data, axios });
-  //     if (onUpdate) onUpdate();
-  //     toast.success('Cập nhật bộ flashcard thành công');
-  //     hide();
-  //   } catch (error) {
-  //     toast.error('Cập nhật thất bại');
-  //     console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:38 ~ handleFormSubmit ~ error', error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+  async function changeRole(data: ICustomUser) {
+    try {
+      setLoading(true);
+      await changePermissionService(data.user_id, values.role_id);
+      hide();
+      if (onUpdate) onUpdate();
+      toast.success('Thay đổi role thành công');
+    } catch (error: any) {
+      console.log('🚀 ~ file: FormUser.tsx:77 ~ changeRole ~ error', error);
+      toast.error('Thay đổi thất bại');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function isValuesNotChanged() {
     if (isCreate) {
@@ -171,15 +143,15 @@ function FormUser({
           sx={{
             mt: '3px',
           }}
-          value={values.role}
+          value={values.role_id}
           onBlur={handleBlur}
           onChange={handleChange}
-          name="role"
+          name="role_id"
         >
-          <MenuItem value="student">Học viên</MenuItem>
-          <MenuItem value="teacher">Giáo viên</MenuItem>
-          <MenuItem value="teaching staff">Nhân viên giảng dạy</MenuItem>
-          <MenuItem value="admin">Admin</MenuItem>
+          <MenuItem value={4}>Học viên</MenuItem>
+          <MenuItem value={3}>Giáo viên</MenuItem>
+          <MenuItem value={2}>Nhân viên giảng dạy</MenuItem>
+          <MenuItem value={1}>Admin</MenuItem>
         </Select>
       </FormControl>
 
