@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 import { Avatar, Box, Card, Grid, Typography } from '@mui/material';
 
 // assets
-import AddTaskIcon from '@mui/icons-material/AddTask';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import { colors } from 'theme';
 
 const CardWrapper = styled(Card)(({ theme }) => ({
@@ -43,7 +43,7 @@ const CardWrapper = styled(Card)(({ theme }) => ({
   },
 }));
 
-const CompletingCard = () => {
+const CompletingCard = ({ value }: { value: number }) => {
   return (
     <>
       <CardWrapper sx={{ height: '100%' }}>
@@ -59,7 +59,7 @@ const CompletingCard = () => {
                       mt: 1,
                     }}
                   >
-                    <AddTaskIcon />
+                    <NotificationsIcon />
                   </Avatar>
                 </Grid>
               </Grid>
@@ -70,7 +70,7 @@ const CompletingCard = () => {
                   <Typography
                     sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}
                   >
-                    500
+                    {value}
                   </Typography>
                 </Grid>
               </Grid>
@@ -82,7 +82,7 @@ const CompletingCard = () => {
                   fontWeight: 500,
                 }}
               >
-                Tổng số lượt hoàn thành các khoá học
+                Đạo hữu hoạt động trong 7 ngày qua
               </Typography>
             </Grid>
           </Grid>

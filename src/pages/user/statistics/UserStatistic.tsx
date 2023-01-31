@@ -1,11 +1,6 @@
 import { Box, Grid } from '@mui/material';
-import { createNewCourseService } from 'api/course/course';
-import { INewCourse } from 'api/course/courseInterface';
 import Topbar from 'components/common/Topbar';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { RootState } from 'redux/store';
+import useFetchUserStatistics from '../hooks/useFetchUserStatistics';
 import CompletingCard from './CompletingCard';
 import JoiningCard from './JoiningCard';
 import LineChart from './LineChart';
@@ -22,8 +17,7 @@ import StarCard from './StarCard';
 const gridSpacing = 3;
 
 const UserStatistic = () => {
-  const { user } = useSelector((store: RootState) => store.auth);
-  const navigate = useNavigate();
+  const { data } = useFetchUserStatistics();
 
   return (
     <Box pb="20px">
@@ -33,20 +27,18 @@ const UserStatistic = () => {
         <Grid item xs={12}>
           <Grid container spacing={gridSpacing}>
             <Grid item lg={4} md={6} sm={6} xs={12}>
-              <JoiningCard />
+              <JoiningCard
+                data={{
+                  value: data.total_users,
+                  newValue: data.total_new_users,
+                }}
+              />
             </Grid>
             <Grid item lg={4} md={6} sm={6} xs={12}>
-              <CompletingCard />
+              <CompletingCard value={data.total_active_users} />
             </Grid>
-            <Grid item lg={4} md={12} sm={12} xs={12}>
-              <Grid container spacing={gridSpacing}>
-                <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <StarCard />
-                </Grid>
-                <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <RatingCard />
-                </Grid>
-              </Grid>
+            <Grid item lg={4} md={6} sm={6} xs={12}>
+              <StarCard value={data.total_rank_point} />
             </Grid>
           </Grid>
         </Grid>
@@ -56,7 +48,7 @@ const UserStatistic = () => {
               <LineChart />
             </Grid>
             <Grid item xs={12} md={4}>
-              <PopularCard />
+              <PopularCard data={data.popular || []} />
             </Grid>
           </Grid>
         </Grid>

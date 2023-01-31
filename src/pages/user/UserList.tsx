@@ -2,10 +2,9 @@ import { IconButton, Box, Typography, Modal, SxProps } from '@mui/material';
 import Topbar from '../../components/common/Topbar';
 import { DataGrid, GridColDef, GridRowSpacingParams } from '@mui/x-data-grid';
 import CustomToolbar from '../../components/common/CustomToolbar';
-import PrimaryButton from '../../components/common/PrimaryButton';
 import EditIcon from '@mui/icons-material/Edit';
 import { default as sx } from 'utils/tableProps';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { initialUser, IUser } from 'api/users/userInterface';
 import useFetchUsers from './hooks/useFetchUsers';
 import FormUser from './FormUser';
@@ -39,10 +38,30 @@ const columns: GridColDef[] = [
     minWidth: 150,
   },
   {
+    field: 'role_name',
+    headerName: 'Role',
+    flex: 1,
+    minWidth: 180,
+    renderCell: (params) => {
+      switch (params.value) {
+        case 'Student':
+          return 'Học viên';
+        case 'Teacher':
+          return 'Giáo viên';
+        case 'Teaching Staff':
+          return 'Nhân viên giảng dạy';
+        case 'Admin':
+          return 'Admin';
+        default:
+          return '';
+      }
+    },
+  },
+  {
     field: 'date_of_birth',
     headerName: 'Ngày sinh',
     minWidth: 150,
-    renderCell: (params) => params.value.slice(0, 10),
+    renderCell: (params) => params.value?.slice(0, 10),
   },
   {
     field: 'phone_number',
@@ -101,6 +120,12 @@ const columns: GridColDef[] = [
     minWidth: 100,
   },
   {
+    field: 'rank_name',
+    headerName: 'Rank',
+    flex: 1,
+    minWidth: 100,
+  },
+  {
     field: 'rank_point',
     headerName: 'Điểm xếp hạng',
     flex: 1,
@@ -136,7 +161,7 @@ const style: SxProps = {
 const UserList = () => {
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [selected, setSelected] = useState<IUser>(initialUser);
-  const { users: rows } = useFetchUsers();
+  const { users: rows, fetchData } = useFetchUsers();
   const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
     return {
       top: params.isFirstVisible ? 0 : 5,
@@ -151,8 +176,6 @@ const UserList = () => {
   );
 
   function handleDelete() {}
-
-  function fetchData() {}
 
   function toggleEdit(data: IUser) {
     setOpenEdit((prev) => !prev);

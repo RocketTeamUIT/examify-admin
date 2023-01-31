@@ -45,7 +45,7 @@ const CardWrapper = styled(Card)(({ theme }) => ({
   },
 }));
 
-const JoiningCard = () => {
+const JoiningCard = ({ data }: { data: any }) => {
   return (
     <>
       <CardWrapper sx={{ height: '100%' }}>
@@ -69,11 +69,21 @@ const JoiningCard = () => {
             <Grid item>
               <Grid container alignItems="center">
                 <Grid item>
-                  <Typography
-                    sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}
-                  >
-                    500
-                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'baseline' }}>
+                    <Typography
+                      sx={{
+                        fontSize: '2.125rem',
+                        fontWeight: 500,
+                        mr: 1,
+                        mt: 1.75,
+                        mb: 0.75,
+                        gap: '8px',
+                      }}
+                    >
+                      {data.value}
+                    </Typography>
+                    <Typography sx={{ fontSize: '14px' }}>(+{data.newValue} tháng qua)</Typography>
+                  </Box>
                 </Grid>
               </Grid>
             </Grid>
@@ -84,7 +94,7 @@ const JoiningCard = () => {
                   fontWeight: 500,
                 }}
               >
-                Tổng số lượt tham gia
+                Tổng số người dùng
               </Typography>
             </Grid>
           </Grid>
