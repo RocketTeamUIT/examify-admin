@@ -34,7 +34,6 @@ const validationSchema = yup.object().shape({
       return value !== undefined && value >= 0;
     }),
   isFullExplanation: yup.boolean(),
-  audio: yup.string(),
   duration: yup
     .number()
     .required('Bắt buộc nhập trường này')

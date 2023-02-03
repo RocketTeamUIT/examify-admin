@@ -6,15 +6,13 @@ import PrimaryButton from '../../components/common/PrimaryButton';
 import EditIcon from '@mui/icons-material/Edit';
 import { default as sx } from 'utils/tableProps';
 import { useState, useEffect } from 'react';
-import useAxiosWithToken from 'hooks/useAxiosWithToken';
+import { useNavigate } from 'react-router-dom';
 import { colors } from 'theme';
 import { Link, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from 'redux/store';
 import { style } from 'utils/sxStyle';
-import { getExamDetail } from 'redux/features/exam/examSlice';
 import FormSet from './FormSet';
 import { initialSet, ISet } from 'api/exam/examInterface';
+import useFetchSet from './hooks/useFetchSet';
 
 type Props = {};
 
@@ -27,10 +25,10 @@ const columns: GridColDef[] = [
     disableColumnMenu: true,
   },
   { field: 'id', headerName: 'ID', width: 90 },
-  {
-    field: 'numericOrder',
-    headerName: 'Thứ tự',
-  },
+  // {
+  //   field: 'numericOrder',
+  //   headerName: 'Thứ tự',
+  // },
   {
     field: 'title',
     headerName: 'Tiêu đề',
@@ -73,24 +71,9 @@ const SetList = (props: Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [selected, setSelected] = useState<ISet>(initialSet);
-  const dispatch = useDispatch<AppDispatch>();
   const { examId, partId } = useParams();
-  const rows = [
-    {
-      id: 1,
-      audio: 'https://www.facebook.com/fundraisers/explore',
-    },
-    {
-      id: 2,
-      audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-    },
-  ];
-
-  function fetchData() {
-    if (examId) {
-      dispatch(getExamDetail(Number(examId)));
-    }
-  }
+  const { data: rows, fetchData } = useFetchSet(Number(partId));
+  const navigate = useNavigate();
 
   function toggleEdit(data: ISet) {
     setOpenEdit((prev) => !prev);
@@ -99,6 +82,10 @@ const SetList = (props: Props) => {
     } else {
       setSelected(data);
     }
+  }
+
+  function handleDelete() {
+    navigate(`/exam/list/${examId}/part/${partId}`);
   }
 
   function toggle() {
@@ -147,18 +134,10 @@ const SetList = (props: Props) => {
         <Box sx={style}>
           <FormSet
             hide={toggle}
-            // onCreate={}
             isCreate
-          />
-        </Box>
-      </Modal>
-      <Modal open={openEdit} onClose={toggleEdit}>
-        <Box sx={style}>
-          <FormSet
-            hide={toggleEdit}
-            onDelete={fetchData}
+            onCreate={fetchData}
             onUpdate={fetchData}
-            initialData={selected}
+            onDelete={handleDelete}
           />
         </Box>
       </Modal>

@@ -9,7 +9,7 @@ import {
   updateUserInfoService,
 } from 'api/auth/auth';
 
-type userType = {
+export type userType = {
   userId?: number;
   email?: string;
   firstName?: string;
@@ -23,6 +23,7 @@ type userType = {
   joinedCourses?: number;
   ownFlashcard?: number;
   rank?: string;
+  roleName?: string;
 };
 
 type authStateType = {

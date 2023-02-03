@@ -17,23 +17,24 @@ import { toast } from 'react-toastify';
 import useAxiosPrivate from 'hooks/useAxiosPrivate';
 import { IChoice, initialChoice, initialQuestion, IQuestion } from 'api/exam/examInterface';
 import { useParams } from 'react-router-dom';
-import { colors } from 'theme';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChoiceForm from './ChoiceForm';
+import useFetchHashtags from './hooks/useFetchHashtags';
+import { createQuestionService, deleteQuestionService, updateQuestionService } from 'api/exam/exam';
 
 const validationSchema = yup.object().shape({
   name: yup.string().required('Bắt buộc nhập trường này'),
-  level: yup.string().not([0, '0'], 'Bắt buộc chọn trường này'),
+  level: yup.number().not([0, '0'], 'Bắt buộc chọn trường này'),
   explain: yup.string(),
+  hashtagId: yup.number().not([0], 'Bắt buộc chọn trường này'),
 });
 
 interface IFormSet {
   isCreate?: boolean;
-  onCreate?: (data: IQuestion) => void;
+  onCreate?: () => void;
   initialData?: IQuestion;
   initialChoices?: IChoice[];
   onUpdate?: () => void;
-  onDelete?: (id: number) => void;
+  onDelete?: () => void;
   hide: (data?: any) => void;
   hideTitle?: boolean;
 }
@@ -52,12 +53,12 @@ function FormQuestion({
   const [open, setOpen] = useState<boolean>(false);
   const [error, setError] = useState('');
   const [choices, setChoices] = useState<IChoice[]>(initialChoices ?? Array(4).fill(initialChoice));
-  const axios = useAxiosPrivate(true);
   const { setId } = useParams();
+  const { data: hashtags } = useFetchHashtags();
 
   const initialValues: IQuestion = {
-    ...initialData,
     ...initialQuestion,
+    ...initialData,
   };
   const { touched, values, handleBlur, handleChange, handleSubmit, errors, resetForm } = useFormik({
     initialValues,
@@ -70,6 +71,7 @@ function FormQuestion({
       resetForm({
         values: initialData,
       });
+      setChoices(initialData.choices);
     }
   }, [initialData, resetForm]);
 
@@ -77,74 +79,67 @@ function FormQuestion({
     if (error) {
       return;
     }
-    // if (isCreate) {
-    //   createFlashcardSet(data);
-    // } else if (initialData) {
-    //   updateFlashcardSet({
-    //     ...data,
-    //     id: initialData.id,
-    //   });
-    // }
+    if (isCreate) {
+      createQuestion(data);
+    } else if (initialData) {
+      updateQuestion(data);
+    }
   }
 
-  // async function createFlashcardSet(data: IQuestion) {
-  //   try {
-  //     setLoading(true);
-  //     const response = await createFlashcardSetService({ axios, ...data });
-  //     if (onCreate)
-  //       onCreate({
-  //         ...response.data.data,
-  //         id: response.data.data.fc_set_id,
-  //       });
-  //     toast.success('Thêm bộ flashcard thành công');
-  //     hide();
-  //   } catch (error) {
-  //     console.log('🚀 ~ file: AddFlashcardSetModal.tsx:93 ~ createFlashcardType ~ error', error);
-  //     toast.error('Thêm thất bại');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+  async function createQuestion(data: IQuestion) {
+    try {
+      setLoading(true);
+      await createQuestionService({ ...data, setQuestionId: Number(setId || 0), choices });
+      if (onCreate) onCreate();
+      toast.success('Thêm thành công');
+      hide();
+    } catch (error) {
+      console.log('🚀 ~ file: AddFlashcardSetModal.tsx:93 ~ createFlashcardType ~ error', error);
+      toast.error('Thêm thất bại');
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  // async function updateFlashcardSet(data: IUpdateFlashcardSet) {
-  //   try {
-  //     setLoading(true);
-  //     await updateFlashcardSetService({ ...data, axios });
-  //     if (onUpdate) onUpdate();
-  //     toast.success('Cập nhật bộ flashcard thành công');
-  //     hide();
-  //   } catch (error) {
-  //     toast.error('Cập nhật thất bại');
-  //     console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:38 ~ handleFormSubmit ~ error', error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+  async function updateQuestion(data: IQuestion) {
+    try {
+      setLoading(true);
+      await updateQuestionService({ data, choices, id: initialData?.id });
+      if (onUpdate) onUpdate();
+      toast.success('Cập nhật thành công');
+      hide();
+    } catch (error) {
+      toast.error('Cập nhật thất bại');
+      console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:38 ~ handleFormSubmit ~ error', error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function isValuesNotChanged() {
     if (isCreate) {
-      return JSON.stringify(initialValues) === JSON.stringify(values);
+      return JSON.stringify(initialValues) === JSON.stringify({ ...values, choices });
     } else if (initialData) {
-      return JSON.stringify(initialData) === JSON.stringify(values);
+      return JSON.stringify(initialData) === JSON.stringify({ ...values, choices });
     }
     return true;
   }
 
   async function handleConfirmDelete() {
-    // setLoading(true);
-    // try {
-    //   if (initialData) {
-    //     await deleteFlashcardSetService({ axios, fc_set_id: initialData.id });
-    //     if (onDelete) onDelete(initialData.id);
-    //     toast.success('Xoá thành công');
-    //     hide();
-    //   }
-    // } catch (error) {
-    //   console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:107 ~ handleConfirmDelete ~ error', error);
-    //   toast.error('Xoá thất bại');
-    // } finally {
-    //   setLoading(false);
-    // }
+    setLoading(true);
+    try {
+      if (initialData) {
+        await deleteQuestionService(initialData.id);
+        if (onDelete) onDelete();
+        toast.success('Xoá thành công');
+        hide();
+      }
+    } catch (error) {
+      console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:107 ~ handleConfirmDelete ~ error', error);
+      toast.error('Xoá thất bại');
+    } finally {
+      setLoading(false);
+    }
   }
 
   function toggle() {
@@ -215,9 +210,9 @@ function FormQuestion({
           <MenuItem value={0} disabled>
             Chọn
           </MenuItem>
-          <MenuItem value="easy">Dễ</MenuItem>
-          <MenuItem value="average">Trung bình</MenuItem>
-          <MenuItem value="hard">Khó</MenuItem>
+          <MenuItem value={1}>Dễ</MenuItem>
+          <MenuItem value={2}>Trung bình</MenuItem>
+          <MenuItem value={3}>Khó</MenuItem>
         </Select>
         <FormHelperText>{!!touched.level && errors.level}</FormHelperText>
       </FormControl>
@@ -238,19 +233,39 @@ function FormQuestion({
 
       <Divider sx={{ mt: '24px' }} />
 
-      <CustomTextField
-        label="Hashtag"
-        sx={{ mt: '8px', width: '100%', display: 'flex' }}
-        helperText={!!touched.hashtagId && errors.hashtagId}
-        inputProps={{
-          placeholder: 'Hashtag',
-          value: values.hashtagId,
-          onBlur: handleBlur,
-          onChange: handleChange,
-          error: !!touched.hashtagId && !!errors.hashtagId,
-          name: 'hashtagId',
-        }}
-      />
+      <FormControl
+        error={!!touched.hashtagId && !!errors.hashtagId}
+        sx={{ mt: '24px', width: '100%', display: 'flex' }}
+      >
+        <label
+          style={{
+            fontWeight: 'bold',
+            color: '#000 !important',
+          }}
+        >
+          Hashtag
+        </label>
+        <Select
+          sx={{
+            mt: '3px',
+          }}
+          value={values.hashtagId}
+          onBlur={handleBlur}
+          onChange={handleChange}
+          name="hashtagId"
+        >
+          <MenuItem value={0} disabled>
+            Chọn
+          </MenuItem>
+          {hashtags.map((item: any) => (
+            <MenuItem key={item.id} value={item.id}>
+              {item.name}
+            </MenuItem>
+          ))}
+        </Select>
+        <FormHelperText>{!!touched.hashtagId && errors.hashtagId}</FormHelperText>
+      </FormControl>
+
       <CustomTextField
         label="Giải thích"
         sx={{ mt: '24px', width: '100%', display: 'flex' }}

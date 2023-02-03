@@ -5,14 +5,12 @@ import CustomToolbar from '../../components/common/CustomToolbar';
 import PrimaryButton from '../../components/common/PrimaryButton';
 import EditIcon from '@mui/icons-material/Edit';
 import { default as sx } from 'utils/tableProps';
-import { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from 'redux/store';
-import FormPart from './FormPart';
+import { useState } from 'react';
+
 import { style } from 'utils/sxStyle';
-import { initialPart, IPart } from 'api/exam/examInterface';
-import useFetchParts from './hooks/useFetchParts';
+import { initialHashtag, IHashtag } from 'api/exam/examInterface';
+import useFetchHashtags from './hooks/useFetchHashtags';
+import FormHashtag from './FormHashtag';
 
 type Props = {};
 
@@ -25,25 +23,12 @@ const columns: GridColDef[] = [
     disableColumnMenu: true,
   },
   { field: 'id', headerName: 'ID', width: 90 },
-  // {
-  //   field: 'numericOrder',
-  //   headerName: 'Thứ tự',
-  // },
   {
     field: 'name',
     headerName: 'Tên',
     flex: 1,
     minWidth: 250,
     renderCell: (params) => <Typography fontWeight="bold">{params.value}</Typography>,
-  },
-  {
-    field: 'totalQuestion',
-    headerName: 'Số câu',
-  },
-  {
-    field: 'numberOfExplaination',
-    headerName: 'Số câu đã giải thích',
-    minWidth: 150,
   },
   {
     field: 'createdAt',
@@ -59,33 +44,26 @@ const columns: GridColDef[] = [
   },
 ];
 
-const PartList = (props: Props) => {
+const HashtagList = (props: Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
-  const [selected, setSelected] = useState<IPart>(initialPart);
-  const { examId } = useParams();
-  const { data: rows, fetchData } = useFetchParts(Number(examId));
+  const [selected, setSelected] = useState<IHashtag>(initialHashtag);
+  const { data: rows, fetchData } = useFetchHashtags();
 
-  function toggleEdit(data: IPart) {
+  columns[0].renderCell = (params) => (
+    <IconButton onClick={() => toggleEdit(params.row)}>
+      <EditIcon />
+    </IconButton>
+  );
+
+  function toggleEdit(data: IHashtag) {
     setOpenEdit((prev) => !prev);
-    if (!data) {
-      setSelected(initialPart);
-    } else {
-      setSelected(data);
-    }
+    setSelected(data);
   }
 
   function toggle() {
     setOpen((prev) => !prev);
   }
-
-  columns[0].renderCell = (params) => (
-    <Link to={`/exam/list/${examId}/part/${params.row.id}`}>
-      <IconButton>
-        <EditIcon />
-      </IconButton>
-    </Link>
-  );
 
   return (
     <Box display="flex" height="calc(100vh - 50px)" flexDirection="column">
@@ -119,11 +97,21 @@ const PartList = (props: Props) => {
 
       <Modal open={open} onClose={toggle}>
         <Box sx={style}>
-          <FormPart hide={toggle} onCreate={fetchData} isCreate />
+          <FormHashtag hide={toggle} onCreate={fetchData} isCreate />
+        </Box>
+      </Modal>
+      <Modal open={openEdit} onClose={toggleEdit}>
+        <Box sx={style}>
+          <FormHashtag
+            hide={toggleEdit}
+            onUpdate={fetchData}
+            onDelete={fetchData}
+            initialData={selected}
+          />
         </Box>
       </Modal>
     </Box>
   );
 };
 
-export default PartList;
+export default HashtagList;

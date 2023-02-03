@@ -8,34 +8,30 @@ import { getExamDetail } from 'redux/features/exam/examSlice';
 import { AppDispatch, RootState } from 'redux/store';
 import { colors } from 'theme';
 import FormSet from './FormSet';
+import useFetchPartDetail from './hooks/useFetchPartDetail';
+import useFetchSetDetail from './hooks/useFetchSetDetail';
 import QuestionList from './QuestionList';
-import SetList from './SetList';
-import { findPart } from './utils/findExam';
+import SideList from './SideList';
 
 function SetDetail() {
   const [currentTab, setCurrentTab] = useState<number>(1);
-  const { examId, partId } = useParams();
+  const { examId, partId, setId } = useParams();
   const { detail } = useSelector((store: RootState) => store.exam);
+  const { data, fetchData } = useFetchSetDetail(Number(setId));
+  const { data: partDetail } = useFetchPartDetail(Number(partId));
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-
-  function fetchData() {
-    if (examId) {
-      dispatch(getExamDetail(Number(examId)));
-    }
-  }
 
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setCurrentTab(newValue);
   };
 
   function handleDelete() {
-    navigate('/exam/list');
+    navigate(`/exam/list/${examId}/part/${partId}`);
   }
 
   const updateData: ISet = {
     ...initialSet,
-    ...detail,
+    ...data,
   };
 
   return (
@@ -48,16 +44,15 @@ function SetDetail() {
             path: '/exam/list',
           },
           {
-            name: detail?.name || '',
-            path: `/exam/list/${detail.id}`,
+            name: detail.name,
+            path: `/exam/list/${examId}`,
           },
           {
-            name: findPart(detail, partId)?.name || '',
-            path: `/exam/list/${detail.id}/part/${partId}`,
+            name: partDetail?.name || '',
+            path: `/exam/list/${examId}/part/${partId}`,
           },
           {
-            // REPLACE LINE BELOW
-            name: 'Set super',
+            name: data?.title || '',
           },
         ]}
         ribbonColor={colors.red[400]}
@@ -71,10 +66,11 @@ function SetDetail() {
         centered
       >
         <Tab value={1} label="Thông tin" />
-        <Tab value={2} label="Danh sách câu hỏi" />
+        <Tab value={2} label="Danh sách side" />
+        <Tab value={3} label="Danh sách câu hỏi" />
       </Tabs>
 
-      {currentTab === 1 ? (
+      {currentTab === 1 && (
         <Box
           maxWidth="600px"
           position="relative"
@@ -83,9 +79,22 @@ function SetDetail() {
             transform: 'translateX(-50%)',
           }}
         >
-          <FormSet hide={() => {}} />
+          <FormSet
+            hide={() => {}}
+            initialData={updateData}
+            onDelete={handleDelete}
+            onUpdate={fetchData}
+          />
         </Box>
-      ) : (
+      )}
+
+      {currentTab === 2 && (
+        <Box sx={{ mt: '24px' }}>
+          <SideList />
+        </Box>
+      )}
+
+      {currentTab === 3 && (
         <Box sx={{ mt: '24px' }}>
           <QuestionList />
         </Box>

@@ -5,9 +5,10 @@ import CustomToolbar from '../../components/common/CustomToolbar';
 import PrimaryButton from '../../components/common/PrimaryButton';
 import EditIcon from '@mui/icons-material/Edit';
 import { default as sx } from 'utils/tableProps';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IExamSeries, initialExamSeries } from 'api/exam/examInterface';
 import FormExamSeries from './FormExamSeries';
+import useFetchExamSeries from './hooks/useFetchExamSeries';
 
 const columns: GridColDef[] = [
   {
@@ -72,19 +73,12 @@ const ExamSeriesPage = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [selected, setSelected] = useState<IExamSeries>(initialExamSeries);
-  // const { types: rows, addType, fetchData, deleteType } = useFetchFlashcardType();
-
-  const rows = [
-    { ...initialExamSeries, id: 1, name: 'abc', author: 'tf' },
-    { ...initialExamSeries, id: 2, name: 'def', author: 'xz' },
-  ];
+  const { data: rows, fetchData } = useFetchExamSeries();
 
   function handleDelete() {}
 
-  function fetchData() {}
-
   columns[0].renderCell = (params) => (
-    <IconButton onClick={() => toggleEdit(params.row.id)}>
+    <IconButton onClick={() => toggleEdit(params.row)}>
       <EditIcon />
     </IconButton>
   );
@@ -93,13 +87,9 @@ const ExamSeriesPage = () => {
     setOpen((prev) => !prev);
   }
 
-  function toggleEdit(id: number) {
+  function toggleEdit(data: IExamSeries) {
     setOpenEdit((prev) => !prev);
-    if (!id) {
-      setSelected(initialExamSeries);
-    } else {
-      setSelected(rows.find((row) => row.id === id) ?? initialExamSeries);
-    }
+    setSelected(data);
   }
 
   return (
@@ -134,14 +124,14 @@ const ExamSeriesPage = () => {
 
       <Modal open={open} onClose={toggle}>
         <Box sx={style}>
-          <FormExamSeries hide={toggle} isCreate />
+          <FormExamSeries hide={toggle} isCreate onCreate={fetchData} />
         </Box>
       </Modal>
       <Modal open={openEdit} onClose={toggleEdit}>
         <Box sx={style}>
           <FormExamSeries
             hide={toggleEdit}
-            onDelete={handleDelete}
+            onDelete={fetchData}
             onUpdate={fetchData}
             initialData={selected}
           />

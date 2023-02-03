@@ -1,17 +1,17 @@
-import { getExamSeriesService } from 'api/exam/exam';
+import { getPartDetailService } from 'api/exam/exam';
 import { useState, useEffect, useCallback } from 'react';
 
-const useFetchExamSeries = () => {
-  const [data, setData] = useState<any[]>([]);
+const useFetchPartDetail = (id: number) => {
+  const [data, setData] = useState<any>({});
 
   const fetchData = useCallback(async () => {
     try {
-      const response = await getExamSeriesService();
+      const response = await getPartDetailService(id);
       setData(response.data.data);
     } catch (error: any) {
       console.log('🚀 ~ file: useFetchFlashcardSetDetail.tsx:18 ~ fetchData ~ error', error);
     }
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     fetchData();
@@ -20,4 +20,4 @@ const useFetchExamSeries = () => {
   return { data, fetchData };
 };
 
-export default useFetchExamSeries;
+export default useFetchPartDetail;
