@@ -1,10 +1,6 @@
-import DashboardPageLayout from '../pages/dashboard/DashboardPageLayout';
+import UserPageLayout from '../pages/dashboard/UserPageLayout';
 import HomePage from '../pages/home/HomePage';
 import { RouteType } from './config';
-import DefaultPage from '../pages/dashboard/DefaultPage';
-import DashboardIndex from '../pages/dashboard/DashboardIndex';
-import AnalyticsPage from '../pages/dashboard/AnalyticsPage';
-import SassPage from '../pages/dashboard/SassPage';
 import { BiHomeAlt, BiLayout, BiDetail } from 'react-icons/bi';
 import { AiFillCreditCard } from 'react-icons/ai';
 import CourseListPage from '../pages/course/CourseListPage';
@@ -24,6 +20,7 @@ import ExamStatistic from 'pages/exam/statistics/ExamStatistic';
 import FlashcardStatistic from 'pages/flashcard/statistics/FlashcardStatistic';
 import UserList from 'pages/user/UserList';
 import UserStatistic from 'pages/user/statistics/UserStatistic';
+import HashtagList from 'pages/exam/HashtagList';
 
 const appRoutes: RouteType[] = [
   {
@@ -33,7 +30,7 @@ const appRoutes: RouteType[] = [
   },
   {
     path: '/user',
-    element: <DashboardPageLayout />,
+    element: <UserPageLayout />,
     state: 'user',
     sidebarProps: {
       displayText: 'User',
@@ -131,6 +128,14 @@ const appRoutes: RouteType[] = [
         state: 'exam.create',
         sidebarProps: {
           displayText: 'Tạo đề',
+        },
+      },
+      {
+        path: '/exam/hashtag',
+        element: <HashtagList />,
+        state: 'exam.hashtag',
+        sidebarProps: {
+          displayText: 'Hashtag',
         },
       },
       {

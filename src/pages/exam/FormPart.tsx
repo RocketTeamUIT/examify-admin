@@ -8,17 +8,19 @@ import AlertDialog from 'pages/course/AlertDialog';
 import { toast } from 'react-toastify';
 import useAxiosPrivate from 'hooks/useAxiosPrivate';
 import { IPart } from 'api/exam/examInterface';
+import { createPartService, deletePartService, updatePartService } from 'api/exam/exam';
+import { useParams } from 'react-router-dom';
 
 const validationSchema = yup.object().shape({
   name: yup.string().required('Bắt buộc nhập trường này'),
 });
 
-interface IFlashcardSetModal {
+interface IFormPart {
   isCreate?: boolean;
-  onCreate?: (data: IPart) => void;
+  onCreate?: () => void;
   initialData?: IPart;
   onUpdate?: () => void;
-  onDelete?: (id: number) => void;
+  onDelete?: () => void;
   hide: (data?: any) => void;
   hideTitle?: boolean;
 }
@@ -31,10 +33,10 @@ function FormPart({
   onDelete,
   hide,
   hideTitle = false,
-}: IFlashcardSetModal) {
+}: IFormPart) {
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
-  const axios = useAxiosPrivate(true);
+  const { examId } = useParams();
 
   const initialValues: IPart = initialData ?? {
     name: '',
@@ -55,49 +57,48 @@ function FormPart({
   }, [initialData, resetForm]);
 
   function handleFormSubmit(data: IPart) {
-    // if (isCreate) {
-    //   createFlashcardSet(data);
-    // } else if (initialData) {
-    //   updateFlashcardSet({
-    //     ...data,
-    //     id: initialData.id,
-    //   });
-    // }
+    if (isCreate) {
+      createPart(data);
+    } else if (initialData) {
+      updatePart(data);
+    }
   }
 
-  // async function createFlashcardSet(data: IPart) {
-  //   try {
-  //     setLoading(true);
-  //     const response = await createFlashcardSetService({ axios, ...data });
-  //     if (onCreate)
-  //       onCreate({
-  //         ...response.data.data,
-  //         id: response.data.data.fc_set_id,
-  //       });
-  //     toast.success('Thêm bộ flashcard thành công');
-  //     hide();
-  //   } catch (error) {
-  //     console.log('🚀 ~ file: AddFlashcardSetModal.tsx:93 ~ createFlashcardType ~ error', error);
-  //     toast.error('Thêm thất bại');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+  async function createPart(data: IPart) {
+    try {
+      setLoading(true);
+      await createPartService({
+        examId,
+        name: data.name,
+      });
+      if (onCreate) onCreate();
+      toast.success('Thêm thành công');
+      hide();
+    } catch (error) {
+      console.log('🚀 ~ file: AddFlashcardSetModal.tsx:93 ~ createFlashcardType ~ error', error);
+      toast.error('Thêm thất bại');
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  // async function updateFlashcardSet(data: IUpdateFlashcardSet) {
-  //   try {
-  //     setLoading(true);
-  //     await updateFlashcardSetService({ ...data, axios });
-  //     if (onUpdate) onUpdate();
-  //     toast.success('Cập nhật bộ flashcard thành công');
-  //     hide();
-  //   } catch (error) {
-  //     toast.error('Cập nhật thất bại');
-  //     console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:38 ~ handleFormSubmit ~ error', error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+  async function updatePart(data: IPart) {
+    try {
+      setLoading(true);
+      await updatePartService({
+        id: initialData?.id,
+        ...data,
+      });
+      if (onUpdate) onUpdate();
+      toast.success('Cập nhật thành công');
+      hide();
+    } catch (error) {
+      toast.error('Cập nhật thất bại');
+      console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:38 ~ handleFormSubmit ~ error', error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function isValuesNotChanged() {
     if (isCreate) {
@@ -109,20 +110,20 @@ function FormPart({
   }
 
   async function handleConfirmDelete() {
-    // setLoading(true);
-    // try {
-    //   if (initialData) {
-    //     await deleteFlashcardSetService({ axios, fc_set_id: initialData.id });
-    //     if (onDelete) onDelete(initialData.id);
-    //     toast.success('Xoá thành công');
-    //     hide();
-    //   }
-    // } catch (error) {
-    //   console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:107 ~ handleConfirmDelete ~ error', error);
-    //   toast.error('Xoá thất bại');
-    // } finally {
-    //   setLoading(false);
-    // }
+    setLoading(true);
+    try {
+      if (initialData) {
+        await deletePartService(initialData.id);
+        if (onDelete) onDelete();
+        toast.success('Xoá thành công');
+        hide();
+      }
+    } catch (error) {
+      console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:107 ~ handleConfirmDelete ~ error', error);
+      toast.error('Xoá thất bại');
+    } finally {
+      setLoading(false);
+    }
   }
 
   function toggle() {

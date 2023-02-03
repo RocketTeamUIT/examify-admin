@@ -3,7 +3,7 @@ import useAxiosPrivate from 'hooks/useAxiosPrivate';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { getUserInfo } from 'redux/features/auth/authSlice';
+import { getUserInfo, userType } from 'redux/features/auth/authSlice';
 import colorConfigs from '../../configs/colorConfigs';
 import { toggleBar } from '../../redux/features/appStateSlice';
 import { AppDispatch, RootState } from '../../redux/store';
@@ -20,7 +20,8 @@ const MainLayout = () => {
 
   useEffect(() => {
     if (user.email && location.pathname === '/') {
-      navigate('/user');
+      if (user.roleName === 'Admin') navigate('/user');
+      else if (user.roleName === 'Teaching Staff') navigate('/course');
     }
   }, [user, navigate, location]);
 

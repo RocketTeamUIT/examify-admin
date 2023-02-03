@@ -5,7 +5,6 @@ import CompletingCard from './CompletingCard';
 import JoiningCard from './JoiningCard';
 import LineChart from './LineChart';
 import PopularCard from './PopularCard';
-import RatingCard from './RatingCard';
 import StarCard from './StarCard';
 
 // import PopularCard from './PopularCard';

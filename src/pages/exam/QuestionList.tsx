@@ -5,24 +5,12 @@ import CustomToolbar from '../../components/common/CustomToolbar';
 import PrimaryButton from '../../components/common/PrimaryButton';
 import EditIcon from '@mui/icons-material/Edit';
 import { default as sx } from 'utils/tableProps';
-import { useState, useEffect } from 'react';
-import useAxiosWithToken from 'hooks/useAxiosWithToken';
-import { colors } from 'theme';
-import { Link, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from 'redux/store';
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { style } from 'utils/sxStyle';
-import { getExamDetail } from 'redux/features/exam/examSlice';
-import FormSet from './FormSet';
-import {
-  IChoice,
-  initialChoice,
-  initialQuestion,
-  initialSet,
-  IQuestion,
-  ISet,
-} from 'api/exam/examInterface';
+import { IChoice, initialChoice, initialQuestion, IQuestion } from 'api/exam/examInterface';
 import FormQuestion from './FormQuestion';
+import useFetchQuestions from './hooks/useFetchQuestions';
 
 const initialChoices: IChoice[] = [
   initialChoice,
@@ -79,36 +67,12 @@ const QuestionList = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [selected, setSelected] = useState<IQuestion>(initialQuestion);
-  const dispatch = useDispatch<AppDispatch>();
   const { examId, partId, setId } = useParams();
-  const rows = [
-    {
-      id: 1,
-      setQuestionId: 1,
-      level: 'easy',
-      name: 'Alo',
-    },
-    {
-      id: 2,
-      setQuestionId: 1,
-      level: 'easy',
-      name: 'Hello',
-    },
-  ];
+  const { data: rows, fetchData } = useFetchQuestions(Number(setId));
 
-  function fetchData() {
-    if (examId) {
-      dispatch(getExamDetail(Number(examId)));
-    }
-  }
-
-  function toggleEdit(id: number) {
+  function toggleEdit(data: any) {
     setOpenEdit((prev) => !prev);
-    if (!id) {
-      setSelected(initialQuestion);
-    } else {
-      setSelected(rows.find((row) => row.id === id) ?? initialQuestion);
-    }
+    setSelected(data);
   }
 
   function toggle() {
@@ -116,7 +80,7 @@ const QuestionList = () => {
   }
 
   columns[0].renderCell = (params) => (
-    <IconButton onClick={() => toggleEdit(params.row.id)}>
+    <IconButton onClick={() => toggleEdit(params.row)}>
       <EditIcon />
     </IconButton>
   );
@@ -153,11 +117,7 @@ const QuestionList = () => {
 
       <Modal open={open} onClose={toggle}>
         <Box sx={style}>
-          <FormQuestion
-            hide={toggle}
-            // onCreate={}
-            isCreate
-          />
+          <FormQuestion hide={toggle} onCreate={fetchData} isCreate />
         </Box>
       </Modal>
       <Modal open={openEdit} onClose={toggleEdit}>

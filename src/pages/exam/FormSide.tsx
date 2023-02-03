@@ -6,31 +6,34 @@ import CustomTextField from 'components/common/CustomTextField';
 import PrimaryButton from 'components/common/PrimaryButton';
 import AlertDialog from 'pages/course/AlertDialog';
 import { toast } from 'react-toastify';
-import useAxiosPrivate from 'hooks/useAxiosPrivate';
-import { initialSet, ISet } from 'api/exam/examInterface';
+// import { ISide } from 'api/exam/examInterface';
 import {
-  createSetQuestionService,
-  deleteSetQuestionService,
-  updateSetQuestionService,
+  createPartService,
+  createSideService,
+  deletePartService,
+  deleteSideService,
+  updatePartService,
+  updateSideService,
 } from 'api/exam/exam';
 import { useParams } from 'react-router-dom';
+import { initialSide, ISide } from 'api/exam/examInterface';
+import CustomCKEditor from 'components/common/CustomCKEditor';
 
 const validationSchema = yup.object().shape({
-  title: yup.string().required('Bắt buộc nhập trường này'),
-  audio: yup.string(),
+  paragraph: yup.string().required('Bắt buộc nhập trường này'),
 });
 
-interface IFormSet {
+interface IFormSide {
   isCreate?: boolean;
   onCreate?: () => void;
-  initialData?: ISet;
+  initialData?: ISide;
   onUpdate?: () => void;
   onDelete?: () => void;
   hide: (data?: any) => void;
   hideTitle?: boolean;
 }
 
-function FormSet({
+function FormSide({
   isCreate,
   onCreate,
   initialData,
@@ -38,16 +41,16 @@ function FormSet({
   onDelete,
   hide,
   hideTitle = false,
-}: IFormSet) {
+}: IFormSide) {
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
-  const { partId } = useParams();
+  const { setId } = useParams();
 
-  const initialValues: ISet = {
+  const initialValues: ISide = {
+    ...initialSide,
     ...initialData,
-    ...initialSet,
   };
-  const { touched, values, handleBlur, handleChange, handleSubmit, errors, resetForm } = useFormik({
+  const { touched, values, setFieldValue, handleSubmit, errors, resetForm } = useFormik({
     initialValues,
     onSubmit: handleFormSubmit,
     validationSchema,
@@ -61,18 +64,18 @@ function FormSet({
     }
   }, [initialData, resetForm]);
 
-  function handleFormSubmit(data: ISet) {
+  function handleFormSubmit(data: ISide) {
     if (isCreate) {
-      createSet(data);
+      createSide(data);
     } else if (initialData) {
-      updateSet(data);
+      updateSide(data);
     }
   }
 
-  async function createSet(data: ISet) {
+  async function createSide(data: ISide) {
     try {
       setLoading(true);
-      await createSetQuestionService({ ...data, partId });
+      await createSideService({ ...data, setQuestionId: setId });
       if (onCreate) onCreate();
       toast.success('Thêm thành công');
       hide();
@@ -84,10 +87,10 @@ function FormSet({
     }
   }
 
-  async function updateSet(data: ISet) {
+  async function updateSide(data: ISide) {
     try {
       setLoading(true);
-      await updateSetQuestionService(data);
+      await updateSideService(data);
       if (onUpdate) onUpdate();
       toast.success('Cập nhật thành công');
       hide();
@@ -112,7 +115,7 @@ function FormSet({
     setLoading(true);
     try {
       if (initialData) {
-        await deleteSetQuestionService(initialData.id);
+        await deleteSideService(initialData.id);
         if (onDelete) onDelete();
         toast.success('Xoá thành công');
         hide();
@@ -141,44 +144,17 @@ function FormSet({
     >
       {!hideTitle && (
         <Typography variant="h5" fontWeight="bold" mb="20px" textAlign="center">
-          {isCreate ? 'Thêm bộ câu hỏi cho phần thi' : 'Chỉnh sửa bộ câu hỏi'}
+          {isCreate ? 'Thêm side cho bộ câu hỏi' : 'Chỉnh sửa side'}
         </Typography>
       )}
-      <CustomTextField
-        label="Tiêu đề"
-        helperText={!!touched.title && errors.title}
-        inputProps={{
-          placeholder: 'Tiêu đề',
-          value: values.title,
-          onBlur: handleBlur,
-          onChange: handleChange,
-          error: !!touched.title && !!errors.title,
-          name: 'title',
-        }}
+      <CustomCKEditor
+        touched={touched}
+        values={values}
+        errors={errors}
+        setFieldValue={setFieldValue}
+        title="Đoạn văn"
+        name="paragraph"
       />
-      <CustomTextField
-        sx={{ mt: '24px', width: '100%', display: 'flex' }}
-        label="Ghi âm / âm thanh"
-        helperText={!!touched.audio && errors.audio}
-        inputProps={{
-          placeholder: 'Ghi âm / âm thanh',
-          value: values.audio,
-          onBlur: handleBlur,
-          onChange: handleChange,
-          error: !!touched.audio && !!errors.audio,
-          name: 'audio',
-        }}
-      />
-      {values.audio && (
-        <audio
-          src={values.audio}
-          style={{
-            marginTop: '12px',
-            width: '100%',
-          }}
-          controls
-        ></audio>
-      )}
 
       <Box display="flex" gap="20px" mt="40px">
         {!isCreate && (
@@ -204,4 +180,4 @@ function FormSet({
   );
 }
 
-export default FormSet;
+export default FormSide;

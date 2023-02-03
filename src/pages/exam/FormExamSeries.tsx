@@ -8,6 +8,11 @@ import AlertDialog from 'pages/course/AlertDialog';
 import { toast } from 'react-toastify';
 import useAxiosPrivate from 'hooks/useAxiosPrivate';
 import { IExamSeries, initialExamSeries } from 'api/exam/examInterface';
+import {
+  createExamSeriesService,
+  deleteExamSeriesService,
+  updateExamSeriesService,
+} from 'api/exam/exam';
 
 const validationSchema = yup.object().shape({
   name: yup.string().required('Bắt buộc nhập trường này'),
@@ -15,10 +20,10 @@ const validationSchema = yup.object().shape({
 
 interface IExamSeriesForm {
   isCreate?: boolean;
-  onCreate?: (data: IExamSeries) => void;
+  onCreate?: () => void;
   initialData?: IExamSeries;
   onUpdate?: () => void;
-  onDelete?: (id: number) => void;
+  onDelete?: () => void;
   hide: (data?: any) => void;
   hideTitle?: boolean;
 }
@@ -55,49 +60,49 @@ function FormExamSeries({
   }, [initialData, resetForm]);
 
   function handleFormSubmit(data: IExamSeries) {
-    // if (isCreate) {
-    //   createFlashcardSet(data);
-    // } else if (initialData) {
-    //   updateFlashcardSet({
-    //     ...data,
-    //     id: initialData.id,
-    //   });
-    // }
+    if (isCreate) {
+      createExamSeries(data);
+    } else if (initialData) {
+      updateExamSeries({
+        ...data,
+        id: initialData.id,
+      });
+    }
   }
 
-  // async function createFlashcardSet(data: IPart) {
-  //   try {
-  //     setLoading(true);
-  //     const response = await createFlashcardSetService({ axios, ...data });
-  //     if (onCreate)
-  //       onCreate({
-  //         ...response.data.data,
-  //         id: response.data.data.fc_set_id,
-  //       });
-  //     toast.success('Thêm bộ flashcard thành công');
-  //     hide();
-  //   } catch (error) {
-  //     console.log('🚀 ~ file: AddFlashcardSetModal.tsx:93 ~ createFlashcardType ~ error', error);
-  //     toast.error('Thêm thất bại');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+  async function createExamSeries(data: IExamSeries) {
+    try {
+      setLoading(true);
+      await createExamSeriesService({
+        name: data.name,
+        author: data.author,
+        createdBy: data.createdBy,
+      });
+      if (onCreate) onCreate();
+      toast.success('Thêm bộ đề thi thành công');
+      hide();
+    } catch (error: any) {
+      console.log('🚀 ~ file: FormExamSeries.tsx:81 ~ createExamSeries ~ error', error);
+      toast.error('Thêm thất bại');
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  // async function updateFlashcardSet(data: IUpdateFlashcardSet) {
-  //   try {
-  //     setLoading(true);
-  //     await updateFlashcardSetService({ ...data, axios });
-  //     if (onUpdate) onUpdate();
-  //     toast.success('Cập nhật bộ flashcard thành công');
-  //     hide();
-  //   } catch (error) {
-  //     toast.error('Cập nhật thất bại');
-  //     console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:38 ~ handleFormSubmit ~ error', error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+  async function updateExamSeries(data: IExamSeries) {
+    try {
+      setLoading(true);
+      await updateExamSeriesService({ ...data, axios });
+      if (onUpdate) onUpdate();
+      toast.success('Cập nhật thành công');
+      hide();
+    } catch (error) {
+      toast.error('Cập nhật thất bại');
+      console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:38 ~ handleFormSubmit ~ error', error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function isValuesNotChanged() {
     if (isCreate) {
@@ -109,20 +114,20 @@ function FormExamSeries({
   }
 
   async function handleConfirmDelete() {
-    // setLoading(true);
-    // try {
-    //   if (initialData) {
-    //     await deleteFlashcardSetService({ axios, fc_set_id: initialData.id });
-    //     if (onDelete) onDelete(initialData.id);
-    //     toast.success('Xoá thành công');
-    //     hide();
-    //   }
-    // } catch (error) {
-    //   console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:107 ~ handleConfirmDelete ~ error', error);
-    //   toast.error('Xoá thất bại');
-    // } finally {
-    //   setLoading(false);
-    // }
+    setLoading(true);
+    try {
+      if (initialData) {
+        await deleteExamSeriesService(initialData.id);
+        if (onDelete) onDelete();
+        toast.success('Xoá thành công');
+        hide();
+      }
+    } catch (error) {
+      console.log('🚀 ~ file: AddFlashcardTypeModal.tsx:107 ~ handleConfirmDelete ~ error', error);
+      toast.error('Xoá thất bại');
+    } finally {
+      setLoading(false);
+    }
   }
 
   function toggle() {

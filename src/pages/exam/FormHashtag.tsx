@@ -6,31 +6,32 @@ import CustomTextField from 'components/common/CustomTextField';
 import PrimaryButton from 'components/common/PrimaryButton';
 import AlertDialog from 'pages/course/AlertDialog';
 import { toast } from 'react-toastify';
-import useAxiosPrivate from 'hooks/useAxiosPrivate';
-import { initialSet, ISet } from 'api/exam/examInterface';
+import { IHashtag, initialHashtag } from 'api/exam/examInterface';
 import {
-  createSetQuestionService,
-  deleteSetQuestionService,
-  updateSetQuestionService,
+  createHashtagService,
+  createPartService,
+  deleteHashtagService,
+  deletePartService,
+  updateHashtagService,
+  updatePartService,
 } from 'api/exam/exam';
 import { useParams } from 'react-router-dom';
 
 const validationSchema = yup.object().shape({
-  title: yup.string().required('Bắt buộc nhập trường này'),
-  audio: yup.string(),
+  name: yup.string().required('Bắt buộc nhập trường này'),
 });
 
-interface IFormSet {
+interface IFormHashtag {
   isCreate?: boolean;
   onCreate?: () => void;
-  initialData?: ISet;
+  initialData?: IHashtag;
   onUpdate?: () => void;
   onDelete?: () => void;
   hide: (data?: any) => void;
   hideTitle?: boolean;
 }
 
-function FormSet({
+function FormHashtag({
   isCreate,
   onCreate,
   initialData,
@@ -38,14 +39,14 @@ function FormSet({
   onDelete,
   hide,
   hideTitle = false,
-}: IFormSet) {
+}: IFormHashtag) {
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
-  const { partId } = useParams();
+  const { examId } = useParams();
 
-  const initialValues: ISet = {
+  const initialValues: IHashtag = {
+    ...initialHashtag,
     ...initialData,
-    ...initialSet,
   };
   const { touched, values, handleBlur, handleChange, handleSubmit, errors, resetForm } = useFormik({
     initialValues,
@@ -61,18 +62,18 @@ function FormSet({
     }
   }, [initialData, resetForm]);
 
-  function handleFormSubmit(data: ISet) {
+  function handleFormSubmit(data: IHashtag) {
     if (isCreate) {
-      createSet(data);
+      createHashtag(data);
     } else if (initialData) {
-      updateSet(data);
+      updateHashtag(data);
     }
   }
 
-  async function createSet(data: ISet) {
+  async function createHashtag(data: IHashtag) {
     try {
       setLoading(true);
-      await createSetQuestionService({ ...data, partId });
+      await createHashtagService(data);
       if (onCreate) onCreate();
       toast.success('Thêm thành công');
       hide();
@@ -84,10 +85,10 @@ function FormSet({
     }
   }
 
-  async function updateSet(data: ISet) {
+  async function updateHashtag(data: IHashtag) {
     try {
       setLoading(true);
-      await updateSetQuestionService(data);
+      await updateHashtagService(data);
       if (onUpdate) onUpdate();
       toast.success('Cập nhật thành công');
       hide();
@@ -112,7 +113,7 @@ function FormSet({
     setLoading(true);
     try {
       if (initialData) {
-        await deleteSetQuestionService(initialData.id);
+        await deleteHashtagService(initialData.id);
         if (onDelete) onDelete();
         toast.success('Xoá thành công');
         hide();
@@ -141,44 +142,21 @@ function FormSet({
     >
       {!hideTitle && (
         <Typography variant="h5" fontWeight="bold" mb="20px" textAlign="center">
-          {isCreate ? 'Thêm bộ câu hỏi cho phần thi' : 'Chỉnh sửa bộ câu hỏi'}
+          {isCreate ? 'Thêm hashtag mới' : 'Chỉnh sửa hashtag'}
         </Typography>
       )}
       <CustomTextField
-        label="Tiêu đề"
-        helperText={!!touched.title && errors.title}
+        label="Tên"
+        helperText={!!touched.name && errors.name}
         inputProps={{
-          placeholder: 'Tiêu đề',
-          value: values.title,
+          placeholder: 'Tên',
+          value: values.name,
           onBlur: handleBlur,
           onChange: handleChange,
-          error: !!touched.title && !!errors.title,
-          name: 'title',
+          error: !!touched.name && !!errors.name,
+          name: 'name',
         }}
       />
-      <CustomTextField
-        sx={{ mt: '24px', width: '100%', display: 'flex' }}
-        label="Ghi âm / âm thanh"
-        helperText={!!touched.audio && errors.audio}
-        inputProps={{
-          placeholder: 'Ghi âm / âm thanh',
-          value: values.audio,
-          onBlur: handleBlur,
-          onChange: handleChange,
-          error: !!touched.audio && !!errors.audio,
-          name: 'audio',
-        }}
-      />
-      {values.audio && (
-        <audio
-          src={values.audio}
-          style={{
-            marginTop: '12px',
-            width: '100%',
-          }}
-          controls
-        ></audio>
-      )}
 
       <Box display="flex" gap="20px" mt="40px">
         {!isCreate && (
@@ -204,4 +182,4 @@ function FormSet({
   );
 }
 
-export default FormSet;
+export default FormHashtag;

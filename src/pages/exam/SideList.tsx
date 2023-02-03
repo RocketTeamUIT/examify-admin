@@ -1,18 +1,17 @@
-import { IconButton, Box, Typography, Modal } from '@mui/material';
+import { IconButton, Box, Modal } from '@mui/material';
 import Topbar from '../../components/common/Topbar';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import CustomToolbar from '../../components/common/CustomToolbar';
 import PrimaryButton from '../../components/common/PrimaryButton';
 import EditIcon from '@mui/icons-material/Edit';
 import { default as sx } from 'utils/tableProps';
-import { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from 'redux/store';
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import FormPart from './FormPart';
 import { style } from 'utils/sxStyle';
-import { initialPart, IPart } from 'api/exam/examInterface';
-import useFetchParts from './hooks/useFetchParts';
+import { initialSide, ISide } from 'api/exam/examInterface';
+import useFetchSides from './hooks/useFetchSides';
+import FormSide from './FormSide';
 
 type Props = {};
 
@@ -25,25 +24,14 @@ const columns: GridColDef[] = [
     disableColumnMenu: true,
   },
   { field: 'id', headerName: 'ID', width: 90 },
-  // {
-  //   field: 'numericOrder',
-  //   headerName: 'Thứ tự',
-  // },
   {
-    field: 'name',
-    headerName: 'Tên',
+    field: 'paragraph',
+    headerName: 'Đoạn văn',
     flex: 1,
-    minWidth: 250,
-    renderCell: (params) => <Typography fontWeight="bold">{params.value}</Typography>,
-  },
-  {
-    field: 'totalQuestion',
-    headerName: 'Số câu',
-  },
-  {
-    field: 'numberOfExplaination',
-    headerName: 'Số câu đã giải thích',
-    minWidth: 150,
+    minWidth: 400,
+    renderCell: (params) => (
+      <Box sx={{ maxHeight: '100%' }} dangerouslySetInnerHTML={{ __html: params.value }} />
+    ),
   },
   {
     field: 'createdAt',
@@ -59,38 +47,32 @@ const columns: GridColDef[] = [
   },
 ];
 
-const PartList = (props: Props) => {
+const SideList = (props: Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
-  const [selected, setSelected] = useState<IPart>(initialPart);
-  const { examId } = useParams();
-  const { data: rows, fetchData } = useFetchParts(Number(examId));
-
-  function toggleEdit(data: IPart) {
-    setOpenEdit((prev) => !prev);
-    if (!data) {
-      setSelected(initialPart);
-    } else {
-      setSelected(data);
-    }
-  }
+  const [selected, setSelected] = useState<ISide>(initialSide);
+  const { setId } = useParams();
+  const { data: rows, fetchData } = useFetchSides(Number(setId));
 
   function toggle() {
     setOpen((prev) => !prev);
   }
 
+  function toggleEdit(data: ISide) {
+    setOpenEdit((prev) => !prev);
+    setSelected(data);
+  }
+
   columns[0].renderCell = (params) => (
-    <Link to={`/exam/list/${examId}/part/${params.row.id}`}>
-      <IconButton>
-        <EditIcon />
-      </IconButton>
-    </Link>
+    <IconButton onClick={() => toggleEdit(params.row)}>
+      <EditIcon />
+    </IconButton>
   );
 
   return (
     <Box display="flex" height="calc(100vh - 50px)" flexDirection="column">
       <Topbar
-        title="Danh sách Part"
+        title="Danh sách Side"
         buttons={[
           <PrimaryButton variant="contained" onClick={toggle}>
             Tạo mới
@@ -119,11 +101,21 @@ const PartList = (props: Props) => {
 
       <Modal open={open} onClose={toggle}>
         <Box sx={style}>
-          <FormPart hide={toggle} onCreate={fetchData} isCreate />
+          <FormSide hide={toggle} onCreate={fetchData} isCreate />
+        </Box>
+      </Modal>
+      <Modal open={openEdit} onClose={toggleEdit}>
+        <Box sx={style}>
+          <FormSide
+            hide={toggleEdit}
+            initialData={selected}
+            onDelete={fetchData}
+            onUpdate={fetchData}
+          />
         </Box>
       </Modal>
     </Box>
   );
 };
 
-export default PartList;
+export default SideList;

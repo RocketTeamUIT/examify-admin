@@ -17,6 +17,7 @@ import ExamDetail from 'pages/exam/ExamDetail';
 import ExamLayout from 'components/layout/ExamLayout';
 import PartDetail from 'pages/exam/PartDetail';
 import SetDetail from 'pages/exam/SetDetail';
+import PageWrapper from 'components/layout/PageWrapper';
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -64,7 +65,14 @@ function App() {
             </Route>
 
             {/* Exam */}
-            <Route path="/exam/list" element={<ExamLayout />}>
+            <Route
+              path="/exam/list"
+              element={
+                <PageWrapper state="exam.list">
+                  <ExamLayout />
+                </PageWrapper>
+              }
+            >
               <Route path="/exam/list/:examId" element={<ExamDetail />} />
               <Route path="/exam/list/:examId/part/:partId" element={<PartDetail />} />
               <Route path="/exam/list/:examId/part/:partId/set/:setId" element={<SetDetail />} />

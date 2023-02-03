@@ -48,13 +48,14 @@ export interface ISet {
 export interface IQuestion {
   id?: number;
   setQuestionId: number;
-  level: string;
+  level: number;
   name: string;
   hashtagId?: number;
   explain?: string;
   orderQn?: number;
   createdAt?: string;
   updatedAt?: string;
+  choices?: any;
 }
 
 export interface IChoice {
@@ -103,9 +104,9 @@ export const initialSet: ISet = {
 export const initialQuestion: IQuestion = {
   id: -1,
   setQuestionId: -1,
-  level: 'easy',
+  level: 0,
   name: '',
-  hashtagId: -1,
+  hashtagId: 0,
   explain: '',
   orderQn: -1,
 };
@@ -118,4 +119,27 @@ export const initialChoice: IChoice = {
 export const initialExamSeries: IExamSeries = {
   name: '',
   author: '',
+};
+
+export interface ISide {
+  id?: number;
+  paragraph: string;
+  seq?: number;
+  createdAt?: number;
+  updatedAt?: number;
+}
+
+export const initialSide: ISide = {
+  paragraph: '',
+};
+
+export interface IHashtag {
+  id?: number;
+  name: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export const initialHashtag = {
+  name: '',
 };
