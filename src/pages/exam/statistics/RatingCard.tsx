@@ -82,7 +82,7 @@ const RatingCard = ({ value }: { value: any }) => {
               }}
               primary={
                 <Typography sx={{ color: '#000', fontSize: '16px', fontWeight: 700 }}>
-                  {getTime(value.time)} / {value.score * 100}%
+                  {getTime(value.time)} / {Math.round(value.score * 100)}%
                 </Typography>
               }
               secondary={

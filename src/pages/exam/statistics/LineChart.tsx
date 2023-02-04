@@ -4,6 +4,7 @@ import { colors } from 'theme';
 import { useState } from 'react';
 import useFetchExams from '../hooks/useFetchExams';
 import useFetchExamDetailStatistics from '../hooks/useFetchCourseDetailStatistics';
+import { convertTimeHours, convertTimeMinutes } from 'utils/formatCurrency';
 
 const LineChart = ({ isDashboard = false }) => {
   const [value, setValue] = useState({
@@ -52,6 +53,18 @@ const LineChart = ({ isDashboard = false }) => {
       });
     });
 
+  function getTime(value: number) {
+    const hours = convertTimeHours(value);
+    const minutes = convertTimeMinutes(value);
+    const seconds = value - hours * 3600 - minutes * 60;
+    let result = '';
+    if (hours) result += hours + 'h ';
+    if (minutes) result += minutes + 'm ';
+    if (seconds) result += seconds + 's ';
+    if (!result) result = '0s';
+    return result;
+  }
+
   return (
     <Box
       sx={{
@@ -80,14 +93,25 @@ const LineChart = ({ isDashboard = false }) => {
           <Typography sx={{ fontSize: '12px', color: '#666', fontWeight: 500 }}>
             Part yêu thích
           </Typography>
-          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>500</Typography>
+          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>
+            {data?.favorite_part?.name} ({data?.favorite_part?.parts_count})
+          </Typography>
         </Box>
 
         <Box>
           <Typography sx={{ fontSize: '12px', color: '#666', fontWeight: 500 }}>
-            Đánh giá
+            TB Thời gian
           </Typography>
-          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>4.5</Typography>
+          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>
+            {getTime(data?.average?.time)}
+          </Typography>
+        </Box>
+
+        <Box>
+          <Typography sx={{ fontSize: '12px', color: '#666', fontWeight: 500 }}>Đúng</Typography>
+          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>
+            {Math.round(data?.average?.score * 100)}%
+          </Typography>
         </Box>
 
         <Box ml="auto" sx={{ display: 'flex', gap: '16px' }}>
