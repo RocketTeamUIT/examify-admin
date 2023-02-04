@@ -6,6 +6,10 @@ export const getAllExamsService = async (axiosPrivate: AxiosInstance) => {
   return (await axiosPrivate.get('/exams')).data;
 };
 
+export const getAllExamsServicePure = () => {
+  return axiosBase.get('/exams');
+};
+
 export function getExamDetailService(id: number) {
   return axiosBase.get('/exams/' + id);
 }
@@ -141,4 +145,14 @@ export function updateHashtagService(data: any) {
 
 export function deleteHashtagService(id: any) {
   return axiosBase.delete('/hashtags/delete/' + id);
+}
+
+export function getExamStatisticsService() {
+  return axiosBase.get('/exams/statistics');
+}
+
+export function getExamDetailStatisticsService(id: number, year: number) {
+  return axiosBase.get('/exams/statistics/' + id, {
+    params: { year },
+  });
 }

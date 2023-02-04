@@ -22,7 +22,7 @@ export const convertTimeHours = (time: number) => {
 export const convertTimeMinutes = (time: number) => {
   if (!time) return 0;
   let hours = Math.floor(Number(time) / 3600);
-  let minutes = Math.round((Number(time) - hours * 3600) / 60);
+  let minutes = Math.floor((Number(time) - hours * 3600) / 60);
 
   return minutes;
 };

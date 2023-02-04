@@ -1,11 +1,8 @@
 import { Box, Grid } from '@mui/material';
-import { createNewCourseService } from 'api/course/course';
-import { INewCourse } from 'api/course/courseInterface';
+
 import Topbar from 'components/common/Topbar';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { RootState } from 'redux/store';
+import useFetchExamStatistics from '../hooks/useFetchExamStatistics';
+
 import CompletingCard from './CompletingCard';
 import JoiningCard from './JoiningCard';
 import LineChart from './LineChart';
@@ -13,17 +10,10 @@ import PopularCard from './PopularCard';
 import RatingCard from './RatingCard';
 import StarCard from './StarCard';
 
-// import PopularCard from './PopularCard';
-// import TotalOrderLineChartCard from './TotalOrderLineChartCard';
-// import TotalIncomeDarkCard from './TotalIncomeDarkCard';
-// import TotalIncomeLightCard from './TotalIncomeLightCard';
-// import TotalGrowthBarChart from './TotalGrowthBarChart';
-
 const gridSpacing = 3;
 
 const ExamStatistic = () => {
-  const { user } = useSelector((store: RootState) => store.auth);
-  const navigate = useNavigate();
+  const { data } = useFetchExamStatistics();
 
   return (
     <Box pb="20px">
@@ -33,18 +23,18 @@ const ExamStatistic = () => {
         <Grid item xs={12}>
           <Grid container spacing={gridSpacing}>
             <Grid item lg={4} md={6} sm={6} xs={12}>
-              <JoiningCard />
+              <JoiningCard value={data.exams_count} />
             </Grid>
             <Grid item lg={4} md={6} sm={6} xs={12}>
-              <CompletingCard />
+              <CompletingCard value={data.taking_count} />
             </Grid>
             <Grid item lg={4} md={12} sm={12} xs={12}>
               <Grid container spacing={gridSpacing}>
                 <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <StarCard />
+                  <StarCard value={data.favorite_parts} />
                 </Grid>
                 <Grid item sm={6} xs={12} md={6} lg={12}>
-                  <RatingCard />
+                  <RatingCard value={data.average || {}} />
                 </Grid>
               </Grid>
             </Grid>
@@ -56,7 +46,7 @@ const ExamStatistic = () => {
               <LineChart />
             </Grid>
             <Grid item xs={12} md={4}>
-              <PopularCard />
+              <PopularCard data={data.popular_exams || []} />
             </Grid>
           </Grid>
         </Grid>

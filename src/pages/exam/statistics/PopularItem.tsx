@@ -1,9 +1,7 @@
 import { Divider, Grid, Typography } from '@mui/material';
-import { colors } from 'theme';
 import PersonIcon from '@mui/icons-material/Person';
-import StarIcon from '@mui/icons-material/Star';
 
-function PopularItem({ hideDivider = false }: { hideDivider: boolean }) {
+function PopularItem({ hideDivider = false, data }: { hideDivider?: boolean; data: any }) {
   return (
     <Grid item xs={12}>
       <Grid container direction="column">
@@ -31,8 +29,7 @@ function PopularItem({ hideDivider = false }: { hideDivider: boolean }) {
                       gap: '8px',
                     }}
                   >
-                    4.3{' '}
-                    <StarIcon sx={{ fontSize: '16px', mt: '-2px', color: colors.orange[300] }} />
+                    {data.participants_count} <PersonIcon sx={{ fontSize: '18px' }} />
                   </Typography>
                 </Grid>
               </Grid>
@@ -49,7 +46,7 @@ function PopularItem({ hideDivider = false }: { hideDivider: boolean }) {
               alignItems: 'center',
             }}
           >
-            1000 <PersonIcon sx={{ fontSize: '16px' }} />
+            {data.taking_count} lượt thi
           </Typography>
         </Grid>
       </Grid>
