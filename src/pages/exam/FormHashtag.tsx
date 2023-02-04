@@ -7,15 +7,7 @@ import PrimaryButton from 'components/common/PrimaryButton';
 import AlertDialog from 'pages/course/AlertDialog';
 import { toast } from 'react-toastify';
 import { IHashtag, initialHashtag } from 'api/exam/examInterface';
-import {
-  createHashtagService,
-  createPartService,
-  deleteHashtagService,
-  deletePartService,
-  updateHashtagService,
-  updatePartService,
-} from 'api/exam/exam';
-import { useParams } from 'react-router-dom';
+import { createHashtagService, deleteHashtagService, updateHashtagService } from 'api/exam/exam';
 
 const validationSchema = yup.object().shape({
   name: yup.string().required('Bắt buộc nhập trường này'),
@@ -42,7 +34,6 @@ function FormHashtag({
 }: IFormHashtag) {
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
-  const { examId } = useParams();
 
   const initialValues: IHashtag = {
     ...initialHashtag,

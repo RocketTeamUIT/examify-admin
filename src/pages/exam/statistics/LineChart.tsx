@@ -1,22 +1,56 @@
-import { Box, Typography, TextField, MenuItem } from '@mui/material';
+import { Box, Typography, MenuItem, Select } from '@mui/material';
 import { ResponsiveLine } from '@nivo/line';
 import { colors } from 'theme';
 import { useState } from 'react';
-import { mockLineData as data } from './mockData';
-
-const status = [
-  {
-    value: 'month',
-    label: 'Tháng',
-  },
-  {
-    value: 'year',
-    label: 'Năm',
-  },
-];
+import useFetchExams from '../hooks/useFetchExams';
+import useFetchExamDetailStatistics from '../hooks/useFetchCourseDetailStatistics';
 
 const LineChart = ({ isDashboard = false }) => {
-  const [value, setValue] = useState<string>('');
+  const [value, setValue] = useState({
+    exam: -1,
+    year: 2023,
+  });
+  const { data: exams } = useFetchExams();
+  const { data } = useFetchExamDetailStatistics(value.exam, value.year);
+
+  function handleChange(e: any) {
+    setValue({
+      ...value,
+      [e.target.name]: e.target.value,
+    });
+  }
+
+  function formatRows(rows: any, field: string) {
+    return (rows.months || []).map((r: any) => ({
+      x: r.month,
+      y: r[field],
+    }));
+  }
+
+  const lineData = [
+    {
+      id: 'Lượt làm bài',
+      color: colors.greenAccent[500],
+      data: formatRows(data, 'taking_count'),
+    },
+  ];
+
+  Array(7)
+    .fill('')
+    .map((_, i) => i + 1)
+    .forEach((part) => {
+      const partText = 'Part ' + part;
+      if (!data[partText]) return;
+
+      lineData.push({
+        id: partText,
+        color: colors.greenAccent[500],
+        data: Object.keys(data[partText]).map((key) => ({
+          x: parseInt(key),
+          y: data[partText][key],
+        })),
+      });
+    });
 
   return (
     <Box
@@ -35,14 +69,16 @@ const LineChart = ({ isDashboard = false }) => {
       >
         <Box>
           <Typography sx={{ fontSize: '12px', color: '#666', fontWeight: 500 }}>
-            Số người tham gia
+            Số lượt làm bài
           </Typography>
-          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>500</Typography>
+          <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>
+            {data.total_exam_takings} ({data.total_users})
+          </Typography>
         </Box>
 
         <Box>
           <Typography sx={{ fontSize: '12px', color: '#666', fontWeight: 500 }}>
-            Số người hoàn thành
+            Part yêu thích
           </Typography>
           <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>500</Typography>
         </Box>
@@ -54,23 +90,42 @@ const LineChart = ({ isDashboard = false }) => {
           <Typography sx={{ fontSize: '16px', color: '#000', fontWeight: 800 }}>4.5</Typography>
         </Box>
 
-        <Box ml="auto">
-          <TextField
-            id="standard-select-currency"
-            select
+        <Box ml="auto" sx={{ display: 'flex', gap: '16px' }}>
+          <Select
+            id="standard-select-year"
             size="small"
-            value={value}
+            value={value.year}
             sx={{
               fontSize: '14px',
             }}
-            onChange={(e) => setValue(e.target.value)}
+            name="year"
+            onChange={handleChange}
           >
-            {status.map((option) => (
-              <MenuItem sx={{ fontSize: '14px' }} key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
+            <MenuItem value={2022}>2022</MenuItem>
+            <MenuItem value={2023}>2023</MenuItem>
+          </Select>
+          <Select
+            id="standard-select-currency"
+            size="small"
+            value={value.exam}
+            sx={{
+              fontSize: '14px',
+              width: '200px',
+            }}
+            name="exam"
+            onChange={handleChange}
+          >
+            <MenuItem value={-1} disabled>
+              Chọn đề thi
+            </MenuItem>
+            {exams
+              .sort((a, b) => a.id - b.id)
+              .map((exam) => (
+                <MenuItem sx={{ fontSize: '14px' }} key={exam.id} value={exam.id}>
+                  {exam.name}
+                </MenuItem>
+              ))}
+          </Select>
         </Box>
       </Box>
 
@@ -80,7 +135,7 @@ const LineChart = ({ isDashboard = false }) => {
         }}
       >
         <ResponsiveLine
-          data={data}
+          data={lineData}
           theme={{
             axis: {
               domain: {
@@ -122,13 +177,13 @@ const LineChart = ({ isDashboard = false }) => {
                 }
               : { scheme: 'nivo' }
           }
-          margin={{ top: 40, right: 140, bottom: 40, left: 50 }}
+          margin={{ top: 40, right: 150, bottom: 50, left: 50 }}
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',
             min: 'auto',
             max: 'auto',
-            stacked: true,
+            stacked: false,
             reverse: false,
           }}
           yFormat=" >-.2f"
@@ -139,7 +194,7 @@ const LineChart = ({ isDashboard = false }) => {
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: isDashboard ? undefined : 'transportation',
+            legend: 'Tháng',
             legendOffset: 36,
             legendPosition: 'middle',
           }}
@@ -148,7 +203,7 @@ const LineChart = ({ isDashboard = false }) => {
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: isDashboard ? undefined : 'count',
+            legend: 'Giá trị',
             legendOffset: -40,
             legendPosition: 'middle',
           }}

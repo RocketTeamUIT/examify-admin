@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles';
 import { Avatar, Box, Card, Grid, Typography } from '@mui/material';
 
 // assets
-import Person2Icon from '@mui/icons-material/Person2';
+import ArticleIcon from '@mui/icons-material/Article';
 import { colors } from 'theme';
 
 const CardWrapper = styled(Card)(({ theme }) => ({
@@ -45,7 +45,7 @@ const CardWrapper = styled(Card)(({ theme }) => ({
   },
 }));
 
-const JoiningCard = () => {
+const JoiningCard = ({ value }: { value: any }) => {
   return (
     <>
       <CardWrapper sx={{ height: '100%' }}>
@@ -61,7 +61,7 @@ const JoiningCard = () => {
                       mt: 1,
                     }}
                   >
-                    <Person2Icon />
+                    <ArticleIcon />
                   </Avatar>
                 </Grid>
               </Grid>
@@ -72,7 +72,7 @@ const JoiningCard = () => {
                   <Typography
                     sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}
                   >
-                    500
+                    {value}
                   </Typography>
                 </Grid>
               </Grid>
@@ -84,7 +84,7 @@ const JoiningCard = () => {
                   fontWeight: 500,
                 }}
               >
-                Tổng số lượt tham gia
+                Tổng số đề thi
               </Typography>
             </Grid>
           </Grid>
