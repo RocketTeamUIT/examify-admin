@@ -22,7 +22,7 @@ import useFetchHashtags from './hooks/useFetchHashtags';
 import { createQuestionService, deleteQuestionService, updateQuestionService } from 'api/exam/exam';
 
 const validationSchema = yup.object().shape({
-  name: yup.string().required('Bắt buộc nhập trường này'),
+  name: yup.string(),
   level: yup.number().not([0, '0'], 'Bắt buộc chọn trường này'),
   explain: yup.string(),
   hashtagId: yup.number().not([0], 'Bắt buộc chọn trường này'),
@@ -147,10 +147,6 @@ function FormQuestion({
   }
 
   function verify() {
-    if (choices.find((item) => !item.name)) {
-      setError('Phải điền hết tất cả đáp án');
-      return;
-    }
     if (!choices.find((item) => item.key)) {
       setError('Phải có ít nhất 1 đáp án đúng');
       return;
