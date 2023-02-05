@@ -14,7 +14,6 @@ import CustomTextField from 'components/common/CustomTextField';
 import PrimaryButton from 'components/common/PrimaryButton';
 import AlertDialog from 'pages/course/AlertDialog';
 import { toast } from 'react-toastify';
-import useAxiosPrivate from 'hooks/useAxiosPrivate';
 import { IChoice, initialChoice, initialQuestion, IQuestion } from 'api/exam/examInterface';
 import { useParams } from 'react-router-dom';
 import ChoiceForm from './ChoiceForm';

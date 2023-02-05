@@ -6,7 +6,6 @@ import CustomTextField from 'components/common/CustomTextField';
 import PrimaryButton from 'components/common/PrimaryButton';
 import AlertDialog from 'pages/course/AlertDialog';
 import { toast } from 'react-toastify';
-import useAxiosPrivate from 'hooks/useAxiosPrivate';
 import { initialSet, ISet } from 'api/exam/examInterface';
 import {
   createSetQuestionService,
@@ -44,8 +43,8 @@ function FormSet({
   const { partId } = useParams();
 
   const initialValues: ISet = {
-    ...initialData,
     ...initialSet,
+    ...initialData,
   };
   const { touched, values, handleBlur, handleChange, handleSubmit, errors, resetForm } = useFormik({
     initialValues,
