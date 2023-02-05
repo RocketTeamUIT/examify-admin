@@ -15,7 +15,7 @@ import {
 import { useParams } from 'react-router-dom';
 
 const validationSchema = yup.object().shape({
-  title: yup.string().required('Bắt buộc nhập trường này'),
+  title: yup.string(),
   audio: yup.string(),
 });
 
@@ -99,9 +99,8 @@ function FormSet({
   }
 
   function isValuesNotChanged() {
-    if (isCreate) {
-      return JSON.stringify(initialValues) === JSON.stringify(values);
-    } else if (initialData) {
+    if (isCreate) return false;
+    if (initialData) {
       return JSON.stringify(initialData) === JSON.stringify(values);
     }
     return true;

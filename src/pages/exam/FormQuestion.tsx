@@ -19,6 +19,7 @@ import { useParams } from 'react-router-dom';
 import ChoiceForm from './ChoiceForm';
 import useFetchHashtags from './hooks/useFetchHashtags';
 import { createQuestionService, deleteQuestionService, updateQuestionService } from 'api/exam/exam';
+import CustomCKEditor from 'components/common/CustomCKEditor';
 
 const validationSchema = yup.object().shape({
   name: yup.string(),
@@ -59,7 +60,16 @@ function FormQuestion({
     ...initialQuestion,
     ...initialData,
   };
-  const { touched, values, handleBlur, handleChange, handleSubmit, errors, resetForm } = useFormik({
+  const {
+    touched,
+    values,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+    errors,
+    resetForm,
+    setFieldValue,
+  } = useFormik({
     initialValues,
     onSubmit: handleFormSubmit,
     validationSchema,
@@ -261,20 +271,13 @@ function FormQuestion({
         <FormHelperText>{!!touched.hashtagId && errors.hashtagId}</FormHelperText>
       </FormControl>
 
-      <CustomTextField
-        label="Giải thích"
-        sx={{ mt: '24px', width: '100%', display: 'flex' }}
-        helperText={!!touched.explain && errors.explain}
-        inputProps={{
-          placeholder: 'Giải thích',
-          value: values.explain,
-          onBlur: handleBlur,
-          onChange: handleChange,
-          error: !!touched.explain && !!errors.explain,
-          name: 'explain',
-          multiline: true,
-          rows: 3,
-        }}
+      <CustomCKEditor
+        touched={touched}
+        values={values}
+        errors={errors}
+        setFieldValue={setFieldValue}
+        title="Giải thích"
+        name="explain"
       />
 
       <Box display="flex" gap="20px" mt="40px">
