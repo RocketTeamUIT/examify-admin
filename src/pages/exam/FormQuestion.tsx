@@ -104,7 +104,7 @@ function FormQuestion({
   async function updateQuestion(data: IQuestion) {
     try {
       setLoading(true);
-      await updateQuestionService({ data, choices, id: initialData?.id });
+      await updateQuestionService({ ...data, choices, id: initialData?.id });
       if (onUpdate) onUpdate();
       toast.success('Cập nhật thành công');
       hide();
