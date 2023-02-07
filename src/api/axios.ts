@@ -1,5 +1,5 @@
 import axios from 'axios';
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:5000';
 const CLOUD_NAME = 'doxsstgkc';
 const IMAGE_BASE_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
 
