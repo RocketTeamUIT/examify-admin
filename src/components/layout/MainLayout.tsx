@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import useAxiosPrivate from 'hooks/useAxiosPrivate';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,6 +8,7 @@ import colorConfigs from '../../configs/colorConfigs';
 import { toggleBar } from '../../redux/features/appStateSlice';
 import { AppDispatch, RootState } from '../../redux/store';
 import Sidebar from '../common/Sidebar';
+import UnauthorizeState from 'assets/images/unauthorized_state.jpg';
 
 const MainLayout = () => {
   const { hideBar } = useSelector((store: RootState) => store.appState);
@@ -33,20 +34,50 @@ const MainLayout = () => {
     window.scrollTo(0, 0);
   }, [location]);
 
-  return (
-    <Box sx={{ display: 'flex' }}>
-      <Sidebar toggle={() => dispatch(toggleBar())} showBar={!hideBar} />
-      <Box
-        sx={{
-          flexGrow: 1,
-          py: 3,
-          px: 4,
-          height: '100vh',
-          backgroundColor: colorConfigs.mainBg,
-        }}
-      >
-        <Outlet />
+  const checkPermission = user.roleName === 'Admin' || user.roleName === 'Teaching Staff';
+
+  if (checkPermission)
+    return (
+      <Box sx={{ display: 'flex' }}>
+        <Sidebar toggle={() => dispatch(toggleBar())} showBar={!hideBar} />
+        <Box
+          sx={{
+            flexGrow: 1,
+            py: 3,
+            px: 4,
+            height: '100vh',
+            backgroundColor: colorConfigs.mainBg,
+          }}
+        >
+          <Outlet />
+        </Box>
       </Box>
+    );
+
+  return (
+    <Box
+      sx={{
+        width: '100%',
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '20px',
+      }}
+    >
+      <img
+        style={{
+          objectFit: 'contain',
+          maxHeight: '80%',
+        }}
+        src={UnauthorizeState}
+        alt="Unauthorized"
+      />
+
+      <Typography variant="h6" sx={{ fontWeight: 700 }}>
+        Tài khoản của bạn chưa được uỷ quyền
+      </Typography>
     </Box>
   );
 };
